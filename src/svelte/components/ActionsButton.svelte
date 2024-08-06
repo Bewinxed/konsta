@@ -1,73 +1,85 @@
-<script>
+<script lang="ts">
   import { ActionsButtonClasses } from '../../shared/classes/ActionsButtonClasses.js';
   import { ActionsButtonColors } from '../../shared/colors/ActionsButtonColors.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useTheme } from '../shared/use-theme.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component = 'button',
+    href,
+    bold,
+    boldIos,
+    boldMaterial,
+    fontSizeIos,
+    fontSizeMaterial,
+    touchRipple,
+    dividers,
+    onClick,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: {
+      ios?: string;
+      material?: string;
+    };
+    component?: string;
+    ios?: boolean;
+    material?: boolean;
+    href?: string;
+    target?: string;
+    bold?: boolean;
+    boldIos?: boolean;
+    boldMaterial?: boolean;
+    fontSizeIos?: string;
+    fontSizeMaterial?: string;
+    touchRipple?: boolean;
+    dividers?: boolean;
+    onClick?: () => void;
 
-  export let component = 'button';
-  export let href = undefined;
-
-  export let bold = undefined;
-  export let boldIos = false;
-  export let boldMaterial = false;
-  export let fontSizeIos = 'text-xl';
-  export let fontSizeMaterial = 'text-base';
-  export let touchRipple = true;
-  export let dividers = true;
-
-  export let onClick = undefined;
+  } = $props()
 
   const rippleEl = { current: null };
 
   const dark = useDarkClasses();
 
-  $: useTouchRipple(rippleEl, touchRipple);
+  $effect(() => useTouchRipple(rippleEl, touchRipple));
 
-  $: attrs = {
+  let attrs = $derived({
     href,
-    ...$$restProps,
-  };
+    ...restProps,
+  })
 
-  let Component = component;
-  if (typeof component === 'undefined' && (href || href === '')) {
-    Component = 'a';
-  } else if (typeof component === 'undefined') {
-    Component = 'button';
-  }
+  let Component = $derived(typeof component === 'undefined' && (href || href === '') ? 'a' : 'button')
 
-  $: colors = ActionsButtonColors(colorsProp, dark);
+  let colors = $derived(ActionsButtonColors(colorsProp, dark))
 
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
+  let theme = useTheme({}, (v) => (theme = v));
 
-  $: isDividers = typeof dividers === 'undefined' ? theme === 'ios' : dividers;
+  let isDividers = $derived(typeof dividers === 'undefined' ? theme === 'ios' : dividers)
 
-  $: isBold =
-    typeof bold === 'undefined'
-      ? theme === 'ios'
-        ? boldIos
-        : boldMaterial
-      : bold;
+  let isBold = $derived(typeof bold === 'undefined'
+    ? theme === 'ios'
+      ? boldIos
+      : boldMaterial
+    : bold)
 
-  $: c = useThemeClasses(
+
+  let c = $derived(useThemeClasses(
     { ios, material },
     ActionsButtonClasses(
       { bold: isBold, fontSizeIos, fontSizeMaterial, dividers: isDividers },
       colors,
       dark
     ),
+    (v) => (c = v),
     className,
-    (v) => (c = v)
-  );
+  ))
 </script>
 
 <svelte:element
@@ -76,7 +88,7 @@
   class={c.base}
   role="button"
   tabindex="0"
-  on:click={onClick}
+  onclick={onClick}
   {...attrs}
 >
   <slot />

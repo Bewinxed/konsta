@@ -1,11 +1,21 @@
-<script>
-  import { afterUpdate } from 'svelte';
+<script lang="ts">
+  import { Snippet } from 'svelte';
   import { KonstaStore } from './KonstaStore.js';
 
-  export let theme;
-  export let dark = false;
-  export let touchRipple = true;
-  export let autoThemeDetection = true;
+  let {
+    theme,
+    dark = false,
+    touchRipple = true,
+    autoThemeDetection = true,
+    children,
+    ...restProps
+  }: {
+    theme?: 'ios' | 'material' | 'parent';
+    dark?: boolean;
+    touchRipple?: boolean;
+    autoThemeDetection?: boolean;
+    children: Snippet;
+  } = $props();
 
   let currentTheme = theme;
 
@@ -45,7 +55,7 @@
     }
   };
 
-  afterUpdate(() => {
+  $effect(() => {
     calcTheme();
   });
 
@@ -54,4 +64,4 @@
   updateStore();
 </script>
 
-<slot />
+{@render children()}

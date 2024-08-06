@@ -1,5 +1,18 @@
 import { cls } from '../cls.js';
 
+/**
+ * Generates color classes for action buttons based on the provided color properties and dark mode setting.
+ *
+ * @param {Object} [colorsProp={}] - Custom color properties to override default colors.
+ * @param {Function} dark - Function to generate dark mode classes.
+ * @returns {Object} An object containing color classes for different themes and states.
+ * @property {string} bgIos - Background color class for iOS theme.
+ * @property {string} bgMaterial - Background color class for Material theme.
+ * @property {string} activeBgIos - Active state background color class for iOS theme.
+ * @property {string} activeBgMaterial - Active state background color class for Material theme (empty by default).
+ * @property {string} textIos - Text color class for iOS theme.
+ * @property {string} textMaterial - Text color class for Material theme.
+ */
 export const ActionsButtonColors = (colorsProp = {}, dark) => {
   return {
     bgIos: cls('bg-white', dark('dark:bg-neutral-800')),

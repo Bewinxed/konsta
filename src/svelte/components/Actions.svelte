@@ -1,29 +1,33 @@
-<script>
+<script lang="ts">
   import { ActionsClasses } from '../../shared/classes/ActionsClasses.js';
-  import { useThemeClasses } from '../shared/use-theme-classes.js';
+  import { useThemeClasses } from '../shared/use-theme-classes';
 
-  let className = undefined;
-  export { className as class };
-  export let ios = undefined;
-  export let material = undefined;
+  // turn this to svelte 5 syntax
+  let {
+    class: className,
+    ios,
+    material,
+    opened,
+    backdrop,
+    onBackdropClick,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: boolean;
+    material?: boolean;
+    opened?: boolean;
+    backdrop?: boolean;
+    onBackdropClick?: () => void;
+  } = $props();
 
-  export let opened = undefined;
-  export let backdrop = true;
-  export let onBackdropClick = undefined;
+  let state = $derived(opened ? 'opened' : 'closed');
 
-  $: state = opened ? 'opened' : 'closed';
-
-  $: c = useThemeClasses(
-    { ios, material },
-    ActionsClasses({}),
-    className,
-    (v) => (c = v)
-  );
+  let c = $derived(useThemeClasses({ ios, material }, ActionsClasses({}), undefined, className));
 </script>
 
 {#if backdrop}
-  <div class={c.backdrop[state]} on:click={onBackdropClick} />
+  <div class={c.backdrop[state]} onclick={onBackdropClick} />
 {/if}
-<div class={c.base[state]} {...$$restProps}>
+<div class={c.base[state]} {...restProps}>
   <slot />
 </div>

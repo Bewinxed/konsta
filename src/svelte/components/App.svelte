@@ -1,16 +1,25 @@
-<script>
-  import { afterUpdate } from 'svelte';
+<script lang="ts">
+  import { Snippet } from 'svelte';
   import { AppClasses } from '../../shared/classes/AppClasses.js';
   import KonstaProvider from '../shared/KonstaProvider.svelte';
   import { KonstaStore } from '../shared/KonstaStore.js';
 
-  let className = undefined;
-  export { className as class };
-
-  export let theme = 'material';
-  export let dark = true;
-  export let touchRipple = true;
-  export let safeAreas = true;
+  let {
+    class: className,
+    theme = 'material',
+    dark = true,
+    touchRipple = true,
+    safeAreas = true,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    theme?: 'ios' | 'material' | 'parent';
+    dark?: boolean;
+    touchRipple?: boolean;
+    safeAreas?: boolean;
+    children: Snippet;
+  } = $props();
 
   let currentTheme = theme;
 
@@ -49,17 +58,13 @@
     }
   };
 
-  afterUpdate(() => {
+  $effect(() => {
     calcTheme();
   });
 
   calcTheme();
 
-  $: classes = AppClasses(
-    { theme, dark, touchRipple, safeAreas },
-    currentTheme,
-    className
-  );
+  let classes = $derived(AppClasses(  { theme, dark, touchRipple, safeAreas }, currentTheme, className))
 </script>
 
 <KonstaProvider
@@ -68,7 +73,7 @@
   {touchRipple}
   autoThemeDetection={false}
 >
-  <div class={classes} {...$$restProps}>
-    <slot />
+  <div class={classes} {...restProps}>
+    {@render children()}
   </div>
 </KonstaProvider>

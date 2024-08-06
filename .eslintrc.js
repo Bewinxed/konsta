@@ -36,6 +36,9 @@ const rules = {
   'react/destructuring-assignment': ['off'],
 };
 
+/**
+ * @type {import("eslint").Linter.Config}
+ */
 module.exports = {
   env: {
     browser: true,
@@ -127,16 +130,25 @@ module.exports = {
     },
     // SVELTE
     {
-      plugins: ['svelte3'],
-      files: ['**/*.svelte'],
+      plugins: ['svelte/recommended'],
+      files: [
+        '**/*.svelte',
+        '*.svelte',
+        '**/*.svelte.ts',
+        '*.svelte.ts',
+        '**/*.svelte.js',
+        '*.svelte.js',
+      ],
       extends: ['airbnb-base'],
-      processor: 'svelte3/svelte3',
       rules: {
         ...rules,
         'no-restricted-globals': ['off'],
         'object-curly-newline': ['off'],
         curly: ['off'],
         indent: ['off'],
+        'svelte/rule-name': 'error',
+        '@typescript-eslint/no-unsafe-assignment': ['off'],
+        '@typescript-eslint/no-unsafe-member-access': ['off'],
         'operator-linebreak': ['off'],
         'nonblock-statement-body-position': ['off'],
         'import/no-mutable-exports': ['off'],
