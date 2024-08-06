@@ -1,5 +1,7 @@
 ![Konsta UI](https://konstaui.com/images/share-banner.png)
 
+# THIS IS A FORK TO MIGRATE THE SVELTE SECTION TO TYPESCRIPT & SVELTE 5
+
 # Konsta UI
 
 Konsta UI - Pixel perfect mobile UI components built with Tailwind CSS with iOS and Material Design components for React, Vue & Svelte
