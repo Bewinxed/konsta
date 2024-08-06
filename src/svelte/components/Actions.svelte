@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Snippet } from 'svelte';
   import { ActionsClasses } from '../../shared/classes/ActionsClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes';
 
@@ -9,6 +10,7 @@
     material,
     opened,
     backdrop,
+    children,
     onBackdropClick,
     ...restProps
   }: {
@@ -17,17 +19,20 @@
     material?: boolean;
     opened?: boolean;
     backdrop?: boolean;
+    children?: Snippet;
     onBackdropClick?: () => void;
   } = $props();
 
   let state = $derived(opened ? 'opened' : 'closed');
 
-  let c = $derived(useThemeClasses({ ios, material }, ActionsClasses({}), undefined, className));
+  let c = $derived(
+    useThemeClasses({ ios, material }, ActionsClasses({}), undefined, className)
+  );
 </script>
 
 {#if backdrop}
-  <div class={c.backdrop[state]} onclick={onBackdropClick} />
+  <div class="{c.backdrop[state]}" onclick="{onBackdropClick}"></div>
 {/if}
-<div class={c.base[state]} {...restProps}>
-  <slot />
+<div class="{c.base[state]}" {...restProps}>
+  {@render children()}
 </div>

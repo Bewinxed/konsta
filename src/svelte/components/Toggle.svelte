@@ -1,51 +1,70 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { ToggleClasses } from '../../shared/classes/ToggleClasses.js';
   import { ToggleColors } from '../../shared/colors/ToggleColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
 
-  export let component = 'label';
-  export let elRef = { current: null };
-  export let rippleTargetElRef = { current: null };
-
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let checked = false;
-  export let name = undefined;
-  export let value = undefined;
-  export let disabled = false;
-  export let readonly = false;
-  export let onChange = undefined;
-
-  export let touchRipple = true;
+  let {
+    component = 'label',
+    elRef = { current: null },
+    rippleTargetElRef = { current: null },
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    checked = false,
+    name,
+    value,
+    disabled = false,
+    readonly = false,
+    onChange,
+    touchRipple = true,
+    children,
+    ...restProps
+  }: {
+    component?: string;
+    elRef?: any;
+    rippleTargetElRef?: any;
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    checked?: boolean;
+    name?: string;
+    value?: any;
+    disabled?: boolean;
+    readonly?: boolean;
+    onChange?: (e: any) => void;
+    touchRipple?: boolean;
+    children?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
 
   useTouchRipple(rippleTargetElRef, touchRipple, elRef);
 
-  $: colors = ToggleColors(colorsProp, dark);
+  let colors = $derived(ToggleColors(colorsProp, dark));
 
-  $: state = checked ? 'checked' : 'notChecked';
+  let _state = $derived(checked ? 'checked' : 'notChecked');
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ToggleClasses({}, colors, className, dark),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ToggleClasses({}, colors, className, dark),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 <svelte:element
-  this={component}
-  bind:this={elRef.current}
-  class={c.base[state]}
-  {...$$restProps}
+  this="{component}"
+  bind:this="{elRef.current}"
+  class="{c.base[_state]}"
+  {...restProps}
 >
   <input
     type="checkbox"
@@ -54,12 +73,12 @@
     {disabled}
     {readonly}
     {checked}
-    on:change={onChange}
-    class={c.input}
+    onchange="{onChange}"
+    class="{c.input}"
   />
-  <span class={c.inner[state]} />
-  <span bind:this={rippleTargetElRef.current} class={c.thumbWrap[state]}>
-    <span class={c.thumb[state]} />
+  <span class="{c.inner[_state]}"></span>
+  <span bind:this="{rippleTargetElRef.current}" class="{c.thumbWrap[_state]}">
+    <span class="{c.thumb[_state]}"></span>
   </span>
-  <slot />
+  {@render children()}
 </svelte:element>

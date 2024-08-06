@@ -16,7 +16,6 @@
     dividers,
     children,
     ...restProps
-    
   }: {
     class?: string;
     colors?: {
@@ -28,8 +27,8 @@
     fontSizeIos?: string;
     fontSizeMaterial?: string;
     dividers?: boolean;
-    children: Snippet
-  } = $props()
+    children: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
 
@@ -37,24 +36,27 @@
 
   let attrs = $derived({
     ...restProps,
-  })
+  });
 
-  let colors = $derived(ActionsLabelColors(colorsProp, dark))
+  let colors = $derived(ActionsLabelColors(colorsProp, dark));
 
-  let isDividers = $derived(typeof dividers === 'undefined' ? theme === 'ios' : dividers)
+  let isDividers = $derived(
+    typeof dividers === 'undefined' ? theme === 'ios' : dividers
+  );
 
-  let c = $derived(useThemeClasses(
-    { ios, material },
-    ActionsLabelClasses(
-      { fontSizeIos, fontSizeMaterial, dividers: isDividers },
-      colors,
-    ),
-    (v) => (c = v),
-    className,
-  ))
-
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ActionsLabelClasses(
+        { fontSizeIos, fontSizeMaterial, dividers: isDividers },
+        colors
+      ),
+      (v) => (c = v),
+      className
+    )
+  );
 </script>
 
-<div class={c.base} {...attrs}>
+<div class="{c.base}" {...attrs}>
   {@render children()}
 </div>

@@ -1,23 +1,36 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { BreadcrumbsClasses } from '../../shared/classes/BreadcrumbsClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    ios,
+    material,
+    fontSizeIos = 'text-[17px]',
+    fontSizeMaterial = 'text-[14px]',
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: any;
+    material?: any;
+    fontSizeIos?: any;
+    fontSizeMaterial?: any;
+    children?: Snippet;
+  } = $props();
 
-  export let fontSizeIos = 'text-[17px]';
-  export let fontSizeMaterial = 'text-[14px]';
-
-  $: c = useThemeClasses(
-    { ios, material },
-    BreadcrumbsClasses({ fontSizeIos, fontSizeMaterial }),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BreadcrumbsClasses({ fontSizeIos, fontSizeMaterial }),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<div class={c.base} {...$$restProps}>
-  <slot />
+<div class="{c.base}" {...restProps}>
+  {@render children()}
 </div>

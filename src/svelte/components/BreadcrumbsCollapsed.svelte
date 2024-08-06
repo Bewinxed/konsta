@@ -1,40 +1,51 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { BreadcrumbsCollapsedClasses } from '../../shared/classes/BreadcrumbsCollapsedClasses.js';
   import { BreadcrumbsCollapsedColors } from '../../shared/colors/BreadcrumbsCollapsedColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  export let ios = undefined;
-  export let material = undefined;
-
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-
-  export let onClick = undefined;
+  let {
+    class: className,
+    ios,
+    material,
+    colors: colorsProp,
+    onClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: any;
+    material?: any;
+    colors?: any;
+    onClick?: any;
+    children?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
 
-  $: colors = BreadcrumbsCollapsedColors(colorsProp, dark);
+  let colors = $derived(BreadcrumbsCollapsedColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    BreadcrumbsCollapsedClasses({}, colors),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BreadcrumbsCollapsedClasses({}, colors),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 <div
-  class={c.base}
-  {...$$restProps}
+  class="{c.base}"
+  {...restProps}
   role="button"
   tabindex="0"
-  on:click={onClick}
+  onclick="{onClick}"
 >
-  <span class={c.dot} />
-  <span class={c.dot} />
-  <span class={c.dot} />
-  <slot />
+  <span class="{c.dot}"></span>
+  <span class="{c.dot}"></span>
+  <span class="{c.dot}"></span>
+  {@render children()}
 </div>

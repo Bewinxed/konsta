@@ -1,5 +1,21 @@
 import { cls } from '../cls.js';
 
+/**
+ * Generates class names for a card component based on provided props and colors.
+ *
+ * @param {Object} props - The properties for the card component.
+ 
+ * @param {Object} colors - The color classes for various parts of the card.
+ * @param {string} colors.bgIos - Background color for iOS.
+ * @param {string} colors.textIos - Text color for iOS.
+ * @param {string} colors.bgMaterial - Background color for Material design.
+ * @param {string} colors.textMaterial - Text color for Material design.
+ * @param {string} colors.outlineIos - Outline color for iOS.
+ * @param {string} colors.outlineMaterial - Outline color for Material design.
+ * @param {string} colors.footerTextIos - Footer text color for iOS.
+ * @param {string} colors.footerTextMaterial - Footer text color for Material design.
+ * @returns {Object} An object containing class names for different parts of the card.
+ */
 export const CardClasses = (props, colors) => {
   const { margin, headerDivider, footerDivider, contentWrapPadding } = props;
   return {

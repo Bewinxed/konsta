@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   /* eslint-disable no-restricted-globals */
   import { onDestroy, onMount } from 'svelte';
   import { cls } from '../../shared/cls.js';
@@ -9,26 +11,46 @@
   import { PopoverClasses } from '../../shared/classes/PopoverClasses.js';
   import { PopoverColors } from '../../shared/colors/PopoverColors.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-  export let style = '';
-
-  export let angle = true;
-  export let angleClass = '';
-  export let size = 'w-64';
-  export let opened = false;
-  export let backdrop = true;
-  export let onBackdropClick = undefined;
-  export let target = undefined;
-  export let targetX = undefined;
-  export let targetY = undefined;
-  export let targetWidth = undefined;
-  export let targetHeight = undefined;
-  export let translucent = true;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    style = '',
+    angle = true,
+    angleClass = '',
+    size = 'w-64',
+    opened = false,
+    backdrop = true,
+    onBackdropClick,
+    target,
+    targetX,
+    targetY,
+    targetWidth,
+    targetHeight,
+    translucent = true,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: any;
+    ios?: any;
+    material?: any;
+    style?: any;
+    angle?: any;
+    angleClass?: any;
+    size?: any;
+    opened?: any;
+    backdrop?: any;
+    onBackdropClick?: any;
+    target?: any;
+    targetX?: any;
+    targetY?: any;
+    targetWidth?: any;
+    targetHeight?: any;
+    translucent?: any;
+    children?: Snippet;
+  } = $props();
 
   let el;
   let angleEl;
@@ -45,12 +67,11 @@
 
   $: state = opened ? 'opened' : 'closed';
 
-  let theme;
-  theme = useTheme({ ios, material }, (v) => (theme = v));
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
-  $: colors = PopoverColors(colorsProp, dark);
+  let colors = $derived(PopoverColors(colorsProp, dark);
 
   $: c = useThemeClasses(
     { ios, material },
@@ -127,19 +148,19 @@
 </script>
 
 {#if backdrop}
-  <div class={c.backdrop[state]} on:click={onBackdropClick} />
+  <div class="{c.backdrop[state]}" onclick="{onBackdropClick}"></div>
 {/if}
-<div bind:this={el} class={classes} style={popoverStyle} {...$$restProps}>
+<div bind:this="{el}" class="{classes}" style="{popoverStyle}" {...restProps}>
   {#if angle}
     <div
-      bind:this={angleEl}
-      style={angleStyle}
-      class={c.angleWrap[positions.anglePosition]}
+      bind:this="{angleEl}"
+      style="{angleStyle}"
+      class="{c.angleWrap[positions.anglePosition]}"
     >
-      <div class={c.angleArrow[positions.anglePosition]} />
+      <div class="{c.angleArrow[positions.anglePosition]}"></div>
     </div>
   {/if}
-  <div class={c.inner}>
-    <slot />
+  <div class="{c.inner}">
+    {@render children()}
   </div>
 </div>

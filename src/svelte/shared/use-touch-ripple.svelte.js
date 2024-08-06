@@ -6,9 +6,9 @@ import { TouchRipple } from '../../shared/touch-ripple-class.js';
 /**
  * A hook to manage touch ripple effects on elements.
  *
- * @param {Object} el - The element to apply the touch ripple effect to.
+ * @param {Object | HTMLElement} el - The element to apply the touch ripple effect to.
  * @param {boolean} touchRipple - Whether the touch ripple effect should be applied.
- * @param {Object} [eventsEl] - The element to attach event listeners to. Defaults to `el` if not provided.
+ * @param {HTMLElement} [eventsEl] - The element to attach event listeners to. Defaults to `el` if not provided.
  */
 export const useTouchRipple = (el, touchRipple, eventsEl) => {
   if (!eventsEl) eventsEl = el;

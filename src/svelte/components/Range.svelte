@@ -1,51 +1,74 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
   import { RangeClasses } from '../../shared/classes/RangeClasses.js';
   import { RangeColors } from '../../shared/colors/RangeColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let inputId = undefined;
-  export let name = undefined;
-  export let value = undefined;
-  export let readonly = undefined;
-  export let disabled = undefined;
-  export let step = 1;
-  export let min = 0;
-  export let max = 100;
-  export let onInput = undefined;
-  export let onChange = undefined;
-  export let onFocus = undefined;
-  export let onBlur = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    inputId,
+    name,
+    value,
+    readonly,
+    disabled,
+    step = 1,
+    min = 0,
+    max = 100,
+    onInput,
+    onChange,
+    onFocus,
+    onBlur,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    inputId?: string;
+    name?: string;
+    value?: any;
+    readonly?: boolean;
+    disabled?: boolean;
+    step?: number;
+    min?: number;
+    max?: number;
+    onInput?: (e: any) => void;
+    onChange?: (e: any) => void;
+    onFocus?: (e: any) => void;
+    onBlur?: (e: any) => void;
+    children?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
 
-  $: colors = RangeColors(colorsProp, dark);
+  let colors = $derived(RangeColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    RangeClasses({}, colors, dark),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      RangeClasses({}, colors, dark),
+      (v) => (c = v),
+      className
+    )
   );
 
-  $: valueWidth = (((value || 0) - min) / (max - min)) * 100;
+  let valueWidth = $derived((((value || 0) - min) / (max - min)) * 100);
 </script>
 
-<div class={c.base} {...$$restProps}>
-  <span class={c.trackBg} />
-  <span class={c.trackValue} style={`width: ${valueWidth}%`} />
+<div class="{c.base}" {...restProps}>
+  <span class="{c.trackBg}"></span>
+  <span class="{c.trackValue}" style="{`width: ${valueWidth}%`}"></span>
   <input
-    class={cls(c.input, c.inputThumb, c.inputTrack)}
+    class="{cls(c.input, c.inputThumb, c.inputTrack)}"
     type="range"
-    id={inputId}
+    id="{inputId}"
     {name}
     {min}
     {max}
@@ -53,9 +76,9 @@
     {value}
     {readonly}
     {disabled}
-    on:input={onInput}
-    on:change={onChange}
-    on:focus={onFocus}
-    on:blur={onBlur}
+    oninput="{onInput}"
+    onchange="{onChange}"
+    onfocus="{onFocus}"
+    onblur="{onBlur}"
   />
 </div>

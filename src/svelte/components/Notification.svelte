@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { NotificationsClasses } from '../../shared/classes/NotificationsClasses.js';
   import { NotificationsColors } from '../../shared/colors/NotificationsColors.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
@@ -8,104 +10,134 @@
 
   import DeleteIcon from './icons/DeleteIcon.svelte';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-  export let translucent = true;
-  export let onClick = undefined;
-  export let onClose = undefined;
-
-  export let button = undefined;
-  export let title = '';
-  export let titleRightText = '';
-  export let subtitle = '';
-  export let text = '';
-
-  export let opened = false;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    translucent = true,
+    onClick,
+    onClose,
+    button,
+    title = '',
+    titleRightText = '',
+    subtitle = '',
+    text = '',
+    opened = false,
+    children,
+    // slots
+    iconSlot,
+    titleSlot,
+    titleRightTextSlot,
+    subtitleSlot,
+    textSlot,
+    buttonSlot,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    translucent?: boolean;
+    onClick?: (e: any) => void;
+    onClose?: (e: any) => void;
+    button?: boolean;
+    title?: string;
+    titleRightText?: string;
+    subtitle?: string;
+    text?: string;
+    children?: Snippet;
+    // slots
+    iconSlot?: Snippet;
+    titleSlot?: Snippet;
+    titleRightTextSlot?: Snippet;
+    subtitleSlot?: Snippet;
+    textSlot?: Snippet;
+    buttonSlot?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
   let theme;
   theme = useTheme({}, (v) => (theme = v));
 
-  $: colors = NotificationsColors(colorsProp, dark);
+  let colors = $derived(NotificationsColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    NotificationsClasses({ opened, translucent }, colors, className),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      NotificationsClasses({ opened, translucent }, colors, className),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 {#if theme === 'ios'}
-  <div class={c.base} {...$$restProps} on:click={onClick}>
-    <div class={c.header}>
-      {#if $$slots.icon}
-        <div class={c.icon}><slot name="icon" /></div>
+  <div class="{c.base}" {...restProps} onclick="{onClick}">
+    <div class="{c.header}">
+      {#if iconSlot}
+        <div class="{c.icon}">{@render iconSlot()}</div>
       {/if}
-      {#if title || $$slots.title}
-        <div class={c.title}>{printText(title)}<slot name="title" /></div>
+      {#if title || titleSlot}
+        <div class="{c.title}">{printText(title)}{@render titleSlot()}</div>
       {/if}
-      {#if titleRightText || $$slots.titleRightText}
-        <div class={c.titleRightText}>
-          {printText(titleRightText)}<slot name="titleRightText" />
+      {#if titleRightText || titleRightTextSlot}
+        <div class="{c.titleRightText}">
+          {printText(titleRightText)}{@render titleRightTextSlot()}
         </div>
       {/if}
-      {#if button || $$slots.button}
-        <div class={c.button} role="button" tabindex="0" on:click={onClose}>
-          <DeleteIcon {theme} class={c.deleteIcon} />
-          <slot name="button" />
+      {#if button || buttonSlot}
+        <div class="{c.button}" role="button" tabindex="0" onclick="{onClose}">
+          <DeleteIcon {theme} class="{c.deleteIcon}" />
+          {@render buttonSlot()}
         </div>
       {/if}
     </div>
-    <div class={c.content}>
-      {#if subtitle || $$slots.subtitle}
-        <div class={c.subtitle}>
-          {printText(subtitle)}<slot name="subtitle" />
+    <div class="{c.content}">
+      {#if subtitle || subtitleSlot}
+        <div class="{c.subtitle}">
+          {printText(subtitle)}{@render subtitleSlot()}
         </div>
       {/if}
-      {#if text || $$slots.text}
-        <div class={c.text}>{printText(text)}<slot name="text" /></div>
+      {#if text || textSlot}
+        <div class="{c.text}">{printText(text)}{@render textSlot()}</div>
       {/if}
-      <slot />
+      {@render children()}
     </div>
   </div>
 {:else}
-  <div class={c.base} {...$$restProps} on:click={onClick}>
-    <div class={c.header}>
-      {#if $$slots.icon}
-        <div class={c.icon}><slot name="icon" /></div>
+  <div class="{c.base}" {...restProps} onclick="{onClick}">
+    <div class="{c.header}">
+      {#if iconSlot}
+        <div class="{c.icon}">{@render iconSlot()}</div>
       {/if}
-      <div class={c.contentWrapper}>
-        <div class={c.contentTitle}>
-          {#if title || $$slots.title}
-            <div class={c.title}>{printText(title)}<slot name="title" /></div>
+      <div class="{c.contentWrapper}">
+        <div class="{c.contentTitle}">
+          {#if title || titleSlot}
+            <div class="{c.title}">{printText(title)}{@render titleSlot()}</div>
           {/if}
-          {#if titleRightText || $$slots.titleRightText}
-            <div class={c.titleRightText}>
-              {printText(titleRightText)}<slot name="titleRightText" />
+          {#if titleRightText || titleRightTextSlot}
+            <div class="{c.titleRightText}">
+              {printText(titleRightText)}{@render titleRightTextSlot()}
             </div>
           {/if}
         </div>
-        <div class={c.content}>
-          {#if subtitle || $$slots.subtitle}
-            <div class={c.subtitle}>
-              {printText(subtitle)}<slot name="subtitle" />
+        <div class="{c.content}">
+          {#if subtitle || subtitleSlot}
+            <div class="{c.subtitle}">
+              {printText(subtitle)}{@render subtitleSlot()}
             </div>
           {/if}
-          {#if text || $$slots.text}
-            <div class={c.text}>{printText(text)}<slot name="text" /></div>
+          {#if text || textSlot}
+            <div class="{c.text}">{printText(text)}{@render textSlot()}</div>
           {/if}
-          <slot />
+          {@render children()}
         </div>
       </div>
-      {#if button || $$slots.button}
-        <div class={c.button} role="button" tabindex="0" on:click={onClose}>
-          <DeleteIcon {theme} class={c.deleteIcon} />
-          <slot name="button" />
+      {#if button || buttonSlot}
+        <div class="{c.button}" role="button" tabindex="0" onclick="{onClose}">
+          <DeleteIcon {theme} class="{c.deleteIcon}" />
+          {@render buttonSlot()}
         </div>
       {/if}
     </div>

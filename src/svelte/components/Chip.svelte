@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { ChipClasses } from '../../shared/classes/ChipClasses.js';
   import { ChipColors } from '../../shared/colors/ChipColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
@@ -7,42 +9,54 @@
 
   import DeleteIcon from './icons/DeleteIcon.svelte';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let deleteButton = undefined;
-  export let onDelete = undefined;
-  export let outline = false;
-
-  export let onClick = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    deleteButton,
+    onDelete,
+    outline = false,
+    onClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: any;
+    ios?: any;
+    material?: any;
+    deleteButton?: boolean;
+    onDelete?: () => void;
+    outline?: boolean;
+    onClick?: () => void;
+    children?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
 
-  $: style = outline ? 'outline' : 'fill';
+  let theme = $derived(useTheme({}, (v) => (theme = v)));
 
-  $: colors = ChipColors(colorsProp, dark);
+  let style = $derived(outline ? 'outline' : 'fill');
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ChipClasses({}, colors),
-    className,
-    (v) => (c = v)
+  let colors = $derived(ChipColors(colorsProp, dark));
+
+  let c = $derived(
+    useThemeClasses({ ios, material }, ChipClasses({}, colors), (v) => (c = v))
   );
 </script>
 
-<div class={c.base[style]} {...$$restProps} on:click={onClick}>
+<div class="{c.base[style]}" {...restProps} onclick="{onClick}">
   {#if $$slots.media}
-    <div class={c.media}><slot name="media" /></div>
+    <div class="{c.media}"><slot name="media" /></div>
   {/if}
-  <slot />
+  {@render children()}
   {#if deleteButton}
-    <div class={c.deleteButton} role="button" tabindex="0" on:click={onDelete}>
+    <div
+      class="{c.deleteButton}"
+      role="button"
+      tabindex="0"
+      onclick="{onDelete}"
+    >
       <DeleteIcon {theme} class="h-4 w-4" />
     </div>
   {/if}

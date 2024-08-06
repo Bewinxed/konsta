@@ -1,23 +1,34 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { TableBodyClasses } from '../../shared/classes/TableBodyClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
+  let {
+    class: className,
+    ios,
+    material,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: boolean;
+    material?: boolean;
+    children?: Snippet;
+  } = $props();
 
-  export let ios = undefined;
-  export let material = undefined;
+  let rippleEl = $state({ current: null });
 
-  const rippleEl = { current: null };
-
-  $: c = useThemeClasses(
-    { ios, material },
-    TableBodyClasses({}),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      TableBodyClasses({}),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<tbody bind:this={rippleEl.current} class={c.base} {...$$restProps}>
-  <slot />
+<tbody bind:this="{rippleEl.current}" class="{c.base}" {...restProps}>
+  {@render children()}
 </tbody>

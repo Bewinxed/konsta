@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Component, Snippet } from 'svelte';
+
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import DeleteIcon from './icons/DeleteIcon.svelte';
@@ -9,63 +11,124 @@
   import { ListInputColors } from '../../shared/colors/ListInputColors.js';
   import { cls } from '../../shared/cls.js';
   import { printText } from '../shared/print-text.js';
+  import { Booleanish } from 'svelte/elements.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let component = 'li';
-
-  export let label = '';
-  export let outline = undefined;
-  export let outlineIos = undefined;
-  export let outlineMaterial = undefined;
-  export let floatingLabel = false;
-  export let info = undefined; // string
-  export let error = undefined; // string or bool
-  export let clearButton = false;
-  export let dropdown = false;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component = 'li',
+    label = '',
+    outline,
+    outlineIos,
+    outlineMaterial,
+    floatingLabel = false,
+    info,
+    error,
+    clearButton = false,
+    dropdown = false,
+    inputId,
+    inputStyle,
+    inputClass = '',
+    name,
+    value,
+    type = 'text',
+    inputmode,
+    readonly,
+    required,
+    disabled,
+    placeholder,
+    size,
+    accept,
+    autocomplete,
+    autocorrect,
+    autocapitalize,
+    spellcheck,
+    autofocus,
+    autosave,
+    max,
+    min,
+    step,
+    maxlength,
+    minlength,
+    multiple,
+    pattern,
+    tabindex,
+    onInput,
+    onChange,
+    onFocus,
+    onBlur,
+    onClear,
+    children,
+    labelSlot,
+    mediaSlot,
+    innerSlot,
+    inputSlot,
+    errorSlot,
+    infoSlot,
+    contentSlot,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string | Component;
+    label?: string;
+    outline?: boolean;
+    outlineIos?: boolean;
+    outlineMaterial?: boolean;
+    floatingLabel?: boolean;
+    info?: string;
+    error?: string | boolean;
+    clearButton?: boolean;
+    dropdown?: boolean;
+    inputId?: string;
+    inputStyle?: string;
+    inputClass?: string;
+    name?: string;
+    value?: any;
+    type?: string;
+    inputmode?: string;
+    readonly?: boolean;
+    required?: boolean;
+    disabled?: boolean;
+    placeholder?: string;
+    size?: string;
+    accept?: string;
+    autocomplete?: string;
+    autocorrect?: string;
+    autocapitalize?: string;
+    spellcheck?: Booleanish;
+    autofocus?: boolean;
+    autosave?: string;
+    max?: string;
+    min?: string;
+    step?: string;
+    maxlength?: string;
+    minlength?: string;
+    multiple?: boolean;
+    pattern?: string;
+    tabindex?: number;
+    labelSlot?: Snippet;
+    mediaSlot?: Snippet;
+    innerSlot?: Snippet;
+    inputSlot?: Snippet;
+    errorSlot?: Snippet;
+    infoSlot?: Snippet;
+    contentSlot?: Snippet;
+    onInput?: (e: any) => void;
+    onChange?: (e: any) => void;
+    onFocus?: (e: any) => void;
+    onBlur?: (e: any) => void;
+    onClear?: (e: any) => void;
+    children?: Snippet;
+  } = $props();
 
   // input props
-  export let inputId = undefined;
-  export let inputStyle = undefined;
-  export let inputClass = '';
 
-  export let name = undefined;
-  export let value = undefined;
-  export let type = 'text';
-  export let inputmode = undefined;
-  export let readonly = undefined;
-  export let required = undefined;
-  export let disabled = undefined;
-  export let placeholder = undefined;
-  export let size = undefined;
-  export let accept = undefined;
-  export let autocomplete = undefined;
-  export let autocorrect = undefined;
-  export let autocapitalize = undefined;
-  export let spellcheck = undefined;
-  export let autofocus = undefined;
-  export let autosave = undefined;
-  export let max = undefined;
-  export let min = undefined;
-  export let step = undefined;
-  export let maxlength = undefined;
-  export let minlength = undefined;
-  export let multiple = undefined;
-  export let pattern = undefined;
-  export let tabindex = undefined;
-
-  export let onInput = undefined;
-  export let onChange = undefined;
-  export let onFocus = undefined;
-  export let onBlur = undefined;
-  export let onClear = undefined;
-
-  let theme;
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
   theme = useTheme({ ios, material }, (v) => (theme = v));
 
   $: isOutline =
@@ -75,17 +138,19 @@
         : outlineMaterial
       : outline;
 
-  let inputEl = null;
+  let inputEl = $state(null);
 
-  let isFocused = false;
+  let isFocused = $state(false);
 
   const dark = useDarkClasses();
 
-  $: colors = ListInputColors(colorsProp, dark);
+  let colors = $derived(ListInputColors(colorsProp, dark));
 
-  $: labelStyle = label && floatingLabel ? 'floating' : 'stacked';
-  $: labelStyleIsFloating =
-    labelStyle === 'floating' ? 'floating' : 'notFloating';
+  let labelStyle = $derived(label && floatingLabel ? 'floating' : 'stacked');
+
+  let labelStyleIsFloating = $derived(
+    labelStyle === 'floating' ? 'floating' : 'notFloating'
+  );
 
   const getDomValue = () => {
     if (!inputEl) return undefined;
@@ -98,14 +163,13 @@
       ? domValue || domValue === 0
       : value || value === 0;
   };
-  $: isFloatingTransformed =
-    (label || $$slots.label) &&
-    floatingLabel &&
-    !isInputHasValue() &&
-    !isFocused;
+
+  let isFloatingTransformed = $derived(
+    (label || labelSlot) && floatingLabel && !isInputHasValue() && !isFocused
+  );
 
   const getLabelColor = () => {
-    if (error || $$slots.error) return colors.errorText;
+    if (error || errorSlot) return colors.errorText;
     if (theme === 'material') {
       return isFocused
         ? colors.labelTextFocusMaterial
@@ -127,172 +191,172 @@
     if (onBlur) onBlur(e);
   };
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ListInputClasses(
-      {
-        error,
-        type,
-        inputClass,
-        outline: isOutline,
-      },
-      colors,
-      {
-        isFloatingTransformed,
-        isFocused,
-        darkClasses: dark,
-        getLabelColor,
-        inputClass,
-        hasLabel: !!label || $$slots.label,
-      }
-    ),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ListInputClasses(
+        {
+          error,
+          type,
+          inputClass,
+          outline: isOutline,
+        },
+        colors,
+        {
+          isFloatingTransformed,
+          isFocused,
+          darkClasses: dark,
+          getLabelColor,
+          inputClass,
+          hasLabel: label || labelSlot,
+        }
+      ),
+      (v) => (c = v),
+      className
+    )
   );
 
-  $: InputComponent = type === 'select' || type === 'textarea' ? type : 'input';
-  $: needsType = InputComponent === 'input';
+  let InputComponent = $derived(
+    type === 'select' || type === 'textarea' ? type : 'input'
+  );
+
+  let needsType = $derived(InputComponent === 'input');
 </script>
 
 <ListItem
   {component}
-  class={c.base}
-  title={undefined}
-  mediaClass={c.media}
-  innerClass={c.inner[labelStyle]}
-  contentClass={c.itemContent}
-  titleWrapClass={c.titleWrap}
-  withMedia={!!$$slots.media}
-  withTitle={!!$$slots.label || !!label}
-  dividers={theme === 'material' || isOutline ? false : undefined}
-  {...$$restProps}
+  class="{c.base}"
+  title="{undefined}"
+  mediaClass="{c.media}"
+  innerClass="{c.inner[labelStyle]}"
+  contentClass="{c.itemContent}"
+  titleWrapClass="{c.titleWrap}"
+  withMedia="{!!mediaSlot}"
+  withTitle="{!!labelSlot || !!label}"
+  dividers="{theme === 'material' || isOutline ? false : undefined}"
+  {...restProps}
 >
-  <svelte:fragment slot="content">
-    {#if isOutline || theme === 'material'}
-      <span class={c.border} />
-    {/if}
-  </svelte:fragment>
-  <svelte:fragment slot="media">
-    {#if $$slots.media}
-      <slot name="media" />
-    {/if}
-  </svelte:fragment>
+  {#if isOutline || theme === 'material'}
+    <span class="{c.border}"></span>
+  {/if}
 
-  <svelte:fragment slot="inner">
-    {#if label || $$slots.label}
-      <div class={c.label[labelStyle]}>
-        <div class={c.labelText}>
-          {printText(label)}
-          <slot name="label" />
-        </div>
+  {#if mediaSlot}
+    {@render children()}
+  {/if}
+
+  {#if label || labelSlot}
+    <div class="{c.label[labelStyle]}">
+      <div class="{c.labelText}">
+        {printText(label)}
+        {@render labelSlot()}
       </div>
-    {/if}
-    <div class={c.inputWrap[labelStyle]}>
-      {#if $$slots.input}
-        <slot name="input" />
-      {:else}
-        <!-- svelte-ignore a11y-autofocus -->
-        {#if type === 'select'}
-          <svelte:element
-            this={InputComponent}
-            id={inputId}
-            bind:this={inputEl}
-            class={c.input[labelStyleIsFloating]}
-            style={inputStyle}
-            {name}
-            type={needsType ? type : undefined}
-            {placeholder}
-            {inputmode}
-            {size}
-            {accept}
-            {autocomplete}
-            {autocorrect}
-            {autocapitalize}
-            {spellcheck}
-            {autofocus}
-            {autosave}
-            {disabled}
-            {max}
-            {maxlength}
-            {min}
-            {minlength}
-            {step}
-            {multiple}
-            {readonly}
-            {required}
-            {pattern}
-            {tabindex}
-            {value}
-            on:input={onInput}
-            on:change={onChange}
-            on:focus={onFocusInternal}
-            on:blur={onBlurInternal}
-          >
-            <slot />
-          </svelte:element>
-        {:else}
-          <svelte:element
-            this={InputComponent}
-            id={inputId}
-            bind:this={inputEl}
-            class={c.input[labelStyleIsFloating]}
-            style={inputStyle}
-            {name}
-            type={needsType ? type : undefined}
-            {placeholder}
-            {inputmode}
-            {size}
-            {accept}
-            {autocomplete}
-            {autocorrect}
-            {autocapitalize}
-            {spellcheck}
-            {autofocus}
-            {autosave}
-            {disabled}
-            {max}
-            {maxlength}
-            {min}
-            {minlength}
-            {step}
-            {multiple}
-            {readonly}
-            {required}
-            {pattern}
-            {tabindex}
-            {value}
-            on:input={onInput}
-            on:change={onChange}
-            on:focus={onFocusInternal}
-            on:blur={onBlurInternal}
-          />
-        {/if}
-      {/if}
-
-      {#if clearButton}
-        <DeleteIcon {theme} onClick={onClear} class={c.clearButton} />
-      {/if}
-      {#if dropdown}
-        <DropdownIcon class={c.dropdown} />
-      {/if}
     </div>
-    <!-- error info content -->
-    {#if (error && error !== true) || $$slots.error}
-      <div class={cls(c.errorInfo, c.error)}>
-        {#if error !== true}{error}{/if}
-        <slot name="error" />
-      </div>
+  {/if}
+  <div class="{c.inputWrap[labelStyle]}">
+    {#if inputSlot}
+      {@render inputSlot()}
+    {:else}
+      <!-- svelte-ignore a11y-autofocus -->
+      {#if type === 'select'}
+        <svelte:element
+          this="{InputComponent}"
+          id="{inputId}"
+          bind:this="{inputEl}"
+          class="{c.input[labelStyleIsFloating]}"
+          style="{inputStyle}"
+          {name}
+          type="{needsType ? type : undefined}"
+          {placeholder}
+          {inputmode}
+          {size}
+          {accept}
+          {autocomplete}
+          {autocorrect}
+          {autocapitalize}
+          {spellcheck}
+          {autofocus}
+          {autosave}
+          {disabled}
+          {max}
+          {maxlength}
+          {min}
+          {minlength}
+          {step}
+          {multiple}
+          {readonly}
+          {required}
+          {pattern}
+          {tabindex}
+          {value}
+          oninput="{onInput}"
+          onchange="{onChange}"
+          onfocus="{onFocusInternal}"
+          onblur="{onBlurInternal}"
+        >
+          {@render children()}
+        </svelte:element>
+      {:else}
+        <svelte:element
+          this="{InputComponent}"
+          id="{inputId}"
+          bind:this="{inputEl}"
+          class="{c.input[labelStyleIsFloating]}"
+          style="{inputStyle}"
+          {name}
+          type="{needsType ? type : undefined}"
+          {placeholder}
+          {inputmode}
+          {size}
+          {accept}
+          {autocomplete}
+          {autocorrect}
+          {autocapitalize}
+          {spellcheck}
+          {autofocus}
+          {autosave}
+          {disabled}
+          {max}
+          {maxlength}
+          {min}
+          {minlength}
+          {step}
+          {multiple}
+          {readonly}
+          {required}
+          {pattern}
+          {tabindex}
+          {value}
+          oninput="{onInput}"
+          onchange="{onChange}"
+          onfocus="{onFocusInternal}"
+          onblur="{onBlurInternal}"
+        ></svelte:element>
+      {/if}
     {/if}
-    {#if (info || $$slots.info) && !error}
-      <div class={cls(c.errorInfo, c.info)}>
-        {info}
-        <slot name="info" />
-      </div>
+
+    {#if clearButton}
+      <DeleteIcon {theme} onClick="{onClear}" class="{c.clearButton}" />
     {/if}
-    <!-- error info end -->
-  </svelte:fragment>
+    {#if dropdown}
+      <DropdownIcon class="{c.dropdown}" />
+    {/if}
+  </div>
+  <!-- error info content -->
+  {#if (error && error !== true) || errorSlot}
+    <div class="{cls(c.errorInfo, c.error)}">
+      {#if error !== true}{error}{/if}
+      {@render errorSlot()}
+    </div>
+  {/if}
+  {#if (info || infoSlot) && !error}
+    <div class="{cls(c.errorInfo, c.info)}">
+      {info}
+      {@render infoSlot()}
+    </div>
+  {/if}
+  <!-- error info end -->
 
   {#if type !== 'select'}
-    <slot />
+    {@render children()}
   {/if}
 </ListItem>

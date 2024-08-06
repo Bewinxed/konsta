@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Component, Snippet } from 'svelte';
+
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useTheme } from '../shared/use-theme.js';
 
@@ -7,88 +9,96 @@
   import { DialogButtonColors } from '../../shared/colors/DialogButtonColors.js';
   import Button from './Button.svelte';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component: Component = 'button',
+    disabled = false,
+    strong,
+    strongIos,
+    strongMaterial,
+    onClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string | Component;
+    disabled?: boolean;
+    strong?: boolean;
+    strongIos?: boolean;
+    strongMaterial?: boolean;
+    onClick?: () => void;
+    children?: Snippet;
+  } = $props();
 
-  export let component = 'button'; // or 'a'
+  let theme = $derived(useTheme({}, (v) => (theme = v)));
 
-  export let disabled = false;
-  export let strong = undefined;
-  export let strongIos = undefined;
-  export let strongMaterial = undefined;
-
-  export let onClick = undefined;
-
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
-
-  $: isStrong =
+  let isStrong = $derived(
     typeof strong === 'undefined'
       ? theme === 'ios'
         ? strongIos
         : strongMaterial
-      : strong;
+      : strong
+  );
 
-  $: attrs = {
-    ...$$restProps,
-  };
+  let attrs = $derived({
+    ...restProps,
+  });
 
   const dark = useDarkClasses();
 
-  $: colors = DialogButtonColors(colorsProp, dark);
+  let colors = $derived(DialogButtonColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    DialogButtonClasses(
-      { disabled, strong: isStrong },
-      colors,
-      className,
-      dark
-    ),
-    '',
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      DialogButtonClasses({ disabled, strong: isStrong }, colors),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 {#if theme === 'ios'}
-  {#if typeof component === 'string'}
+  {#if typeof Component === 'string'}
     <svelte:element
-      this={component}
-      class={c.base}
+      this="{Component}"
+      class="{c.base}"
       {disabled}
       {...attrs}
       role="button"
       tabindex="0"
-      on:click={onClick}
+      onclick="{onClick}"
     >
-      <slot />
+      {@render children()}
     </svelte:element>
   {:else}
-    <svelte:component
-      this={component}
-      class={c.base}
+    <Component
+      this="{Component}"
+      class="{c.base}"
       {disabled}
       {...attrs}
-      on:click={onClick}
+      onclick="{onClick}"
     >
-      <slot />
-    </svelte:component>
+      {@render children()}
+    </Component>
   {/if}
 {:else}
   <Button
-    {component}
+    component="{Component}"
     inline
     rounded
     {disabled}
-    clear={!isStrong}
-    class={className}
+    clear="{!isStrong}"
+    class="{className}"
     {onClick}
     {...attrs}
   >
-    <slot />
+    {@render children()}
   </Button>
 {/if}

@@ -14,5 +14,17 @@
   "tabWidth": 2,
   "trailingComma": "es5",
   "useTabs": false,
-  "vueIndentScriptAndStyle": true
+  "vueIndentScriptAndStyle": true,
+  "overrides": [
+    {
+      "options": {
+        "plugins": ["prettier-plugin-svelte"],
+        "parser": "svelte",
+        "svelteStrictMode": true,
+        "svelteAllowShorthand": true,
+        "svelteIndentScriptAndStyle": true
+      },
+      "files": ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"]
+    }
+  ]
 }

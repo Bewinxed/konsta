@@ -1,37 +1,51 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { SheetClasses } from '../../shared/classes/SheetClasses.js';
   import { SheetColors } from '../../shared/colors/SheetColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    opened = false,
+    backdrop = true,
+    onBackdropClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: any;
+    ios?: any;
+    material?: any;
+    opened?: any;
+    backdrop?: any;
+    onBackdropClick?: any;
+    children?: Snippet;
+  } = $props();
 
-  export let opened = false;
-  export let backdrop = true;
-  export let onBackdropClick = undefined;
-
-  $: state = opened ? 'opened' : 'closed';
+  let _state = $derived(opened ? 'opened' : 'closed');
 
   const dark = useDarkClasses();
 
-  $: colors = SheetColors(colorsProp, dark);
+  let colors = $derived(SheetColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    SheetClasses({}, colors, className),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      SheetClasses({}, colors, className),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 {#if backdrop}
-  <div class={c.backdrop[state]} on:click={onBackdropClick} />
+  <div class="{c.backdrop[_state]}" onclick="{onBackdropClick}"></div>
 {/if}
-<div class={c.base[state]} {...$$restProps}>
-  <slot />
+<div class="{c.base[_state]}" {...restProps}>
+  {@render children()}
 </div>

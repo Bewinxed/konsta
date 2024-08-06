@@ -1,31 +1,45 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
   import { BadgeClasses } from '../../shared/classes/BadgeClasses.js';
   import { BadgeColors } from '../../shared/colors/BadgeColors.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    small = false,
+    onClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: {
+      ios?: string;
+      material?: string;
+    };
+    ios?: boolean;
+    material?: boolean;
+    small?: boolean;
+    onClick?: () => void;
+    children?: Snippet;
+  } = $props();
 
-  export let small = false;
+  let colors = $derived(BadgeColors(colorsProp));
 
-  export let onClick = undefined;
+  let size = $derived(small ? 'sm' : 'md');
 
-  $: colors = BadgeColors(colorsProp);
-
-  $: size = small ? 'sm' : 'md';
-
-  $: c = useThemeClasses(
-    { ios, material },
-    BadgeClasses({ small }, colors),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BadgeClasses({ small }, colors),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<span class={c.base[size]} {...$$restProps} on:click={onClick}>
-  <slot />
+<span class="{c.base[size]}" {...restProps} onclick="{onClick}">
+  {@render children()}
 </span>

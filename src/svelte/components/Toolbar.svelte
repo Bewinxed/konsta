@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { onMount, afterUpdate } from 'svelte';
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
@@ -6,39 +8,51 @@
   import { ToolbarClasses } from '../../shared/classes/ToolbarClasses.js';
   import { ToolbarColors } from '../../shared/colors/ToolbarColors.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    translucent = true,
+    bgClass = '',
+    innerClass = '',
+    outline,
+    tabbar = false,
+    tabbarLabels = false,
+    tabbarIcons = false,
+    top = false,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    translucent?: boolean;
+    bgClass?: string;
+    innerClass?: string;
+    outline?: boolean;
+    tabbar?: boolean;
+    tabbarLabels?: boolean;
+    tabbarIcons?: boolean;
+    top?: boolean;
+    children?: Snippet;
+  } = $props();
 
-  export let translucent = true;
+  let highlightElRef = $state<HTMLElement>();
 
-  export let bgClass = '';
-  export let innerClass = '';
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
 
-  export let outline = undefined;
-
-  export let tabbar = false;
-  export let tabbarLabels = false;
-  export let tabbarIcons = false;
-
-  export let top = false;
-
-  let highlightElRef = null;
-
-  let theme;
-  theme = useTheme({ ios, material }, (v) => (theme = v));
-
-  let highlightStyle = {
+  let highlightStyle = $state({
     transform: '',
     width: '',
-  };
+  });
 
-  $: isOutline = typeof outline === 'undefined' ? theme === 'ios' : outline;
+  let isOutline = $derived(
+    typeof outline === 'undefined' ? theme === 'ios' : outline
+  );
 
-  $: hasHighlight = theme === 'material' && tabbar && !tabbarIcons;
+  let hasHighlight = $derived(theme === 'material' && tabbar && !tabbarIcons);
 
   const setHighlight = () => {
     if (hasHighlight && highlightElRef) {
@@ -62,43 +76,44 @@
     }
   };
   onMount(() => setHighlight());
-  afterUpdate(() => setHighlight());
+  $effect(() => setHighlight());
 
   const dark = useDarkClasses();
 
-  $: colors = ToolbarColors(colorsProp, dark);
+  let colors = $derived(ToolbarColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ToolbarClasses(
-      {
-        outline: isOutline,
-        translucent,
-        bgClass,
-        innerClass,
-        tabbar,
-        top,
-        tabbarIcons,
-        tabbarLabels,
-      },
-      colors,
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ToolbarClasses(
+        {
+          outline: isOutline,
+          translucent,
+          bgClass,
+          innerClass,
+          tabbar,
+          top,
+          tabbarIcons,
+          tabbarLabels,
+        },
+        colors
+      ),
+      (v) => (c = v),
       className
-    ),
-    className,
-    (v) => (c = v)
+    )
   );
 </script>
 
-<div class={c.base} {...$$restProps}>
-  <div class={c.bg} />
-  <div class={c.inner}>
-    <slot />
+<div class="{c.base}" {...restProps}>
+  <div class="{c.bg}"></div>
+  <div class="{c.inner}">
+    {@render children()}
   </div>
   {#if hasHighlight}
     <span
-      class={c.highlight}
-      style={`width: ${highlightStyle.width} ; transform: ${highlightStyle.transform}`}
-      bind:this={highlightElRef}
-    />
+      class="{c.highlight}"
+      style="{`width: ${highlightStyle.width} ; transform: ${highlightStyle.transform}`}"
+      bind:this="{highlightElRef}"
+    ></span>
   {/if}
 </div>

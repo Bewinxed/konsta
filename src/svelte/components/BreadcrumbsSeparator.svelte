@@ -1,23 +1,35 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { BreadcrumbsSeparatorClasses } from '../../shared/classes/BreadcrumbsSeparatorClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
   import ChevronIcon from './icons/ChevronIcon.svelte';
 
-  let className = undefined;
-  export { className as class };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    ios,
+    material,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: any;
+    material?: any;
+    children?: Snippet;
+  } = $props();
 
-  $: c = useThemeClasses(
-    { ios, material },
-    BreadcrumbsSeparatorClasses({}),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BreadcrumbsSeparatorClasses(),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<div class={c.base} {...$$restProps}>
-  <ChevronIcon class={c.icon} />
-  <slot />
+<div class="{c.base}" {...restProps}>
+  <ChevronIcon class="{c.icon}" />
+  {@render children()}
 </div>

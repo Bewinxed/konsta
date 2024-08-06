@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { TabbarLinkClasses } from '../../shared/classes/TabbarLinkClasses.js';
   import { TabbarLinkColors } from '../../shared/colors/TabbarLinkColors.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
@@ -7,53 +9,70 @@
 
   import Link from './Link.svelte';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-  export let linkProps = {};
-
-  export let active = false;
-  export let label = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    linkProps = {},
+    active = false,
+    label,
+    children,
+    iconSlot,
+    labelSlot,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    linkProps?: any;
+    active?: boolean;
+    label?: string;
+    children?: Snippet;
+    iconSlot?: Snippet;
+    labelSlot?: Snippet;
+  } = $props();
 
   const dark = useDarkClasses();
 
-  $: colors = TabbarLinkColors(colorsProp, dark);
+  let colors = $derived(TabbarLinkColors(colorsProp, dark));
 
-  $: hasIcon = $$slots.icon;
-  $: hasLabel = label || $$slots.label || $$slots.default;
+  let hasIcon = $derived(iconSlot);
+  let hasLabel = $derived(label || labelSlot || children);
 
-  $: c = useThemeClasses(
-    { ios, material },
-    TabbarLinkClasses({ hasLabel, hasIcon, active }, colors),
-    '',
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      TabbarLinkClasses({ hasLabel, hasIcon, active }, colors),
+
+      (v) => (c = v),
+      ''
+    )
   );
 </script>
 
 <Link
   tabbar
-  tabbarActive={active}
-  class={className}
-  {...$$restProps}
+  tabbarActive="{active}"
+  class="{className}"
+  {...restProps}
   {...linkProps}
 >
-  <span class={c.content}>
+  <span class="{c.content}">
     {#if hasIcon}
-      <span class={c.iconContainer}>
-        <span class={c.iconBg} />
-        <slot name="icon" />
+      <span class="{c.iconContainer}">
+        <span class="{c.iconBg}"></span>
+        {@render iconSlot()}
       </span>
     {/if}
     {#if hasLabel}
-      <span class={c.label}>
-        {#if $$slots.label}
-          <slot name="label" />
+      <span class="{c.label}">
+        {#if labelSlot}
+          {@render labelSlot()}
         {:else}
           {printText(label)}
-          <slot />
+          {@render children()}
         {/if}
       </span>
     {/if}

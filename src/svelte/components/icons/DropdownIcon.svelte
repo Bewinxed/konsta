@@ -1,4 +1,14 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
+  let {
+    children,
+    class: className,
+    ...restProps
+  }: {
+    class?: string;
+    children?: Snippet;
+  } = $props();
 </script>
 
 <svg
@@ -7,7 +17,7 @@
   height="5"
   viewBox="0 0 8 5"
   fill="currentcolor"
-  {...$$restProps}
+  {...restProps}
 >
-  <polygon fillRule="evenodd" points="0 0 8 0 4 5" />
+  <polygon fillRule="evenodd" points="0 0 8 0 4 5"></polygon>
 </svg>

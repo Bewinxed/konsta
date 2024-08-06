@@ -1,30 +1,45 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { MessagesClasses } from '../../shared/classes/MessagesClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    ios,
+    material,
+    component = 'div',
+    id,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string;
+    id?: string;
+    children?: Snippet;
+  } = $props();
 
-  export let component = 'div';
-  export let id = undefined;
-  const rippleEl = { current: null };
+  let rippleEl = $state({ current: null });
 
-  $: c = useThemeClasses(
-    { ios, material },
-    MessagesClasses({}, className),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      MessagesClasses(),
+
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
 <svelte:element
-  this={component}
+  this="{component}"
   {id}
-  bind:this={rippleEl.current}
-  class={c.base}
-  {...$$restProps}
+  bind:this="{rippleEl.current}"
+  class="{c.base}"
+  {...restProps}
 >
-  <slot />
+  {@render children()}
 </svelte:element>

@@ -5,6 +5,7 @@
   import { useTheme } from '../shared/use-theme.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
+  import { Snippet } from 'svelte';
 
   let {
     class: className,
@@ -21,6 +22,7 @@
     touchRipple,
     dividers,
     onClick,
+    children,
     ...restProps
   }: {
     class?: string;
@@ -40,11 +42,11 @@
     fontSizeMaterial?: string;
     touchRipple?: boolean;
     dividers?: boolean;
+    children?: Snippet;
     onClick?: () => void;
+  } = $props();
 
-  } = $props()
-
-  const rippleEl = { current: null };
+  let rippleEl = $state({ current: null });
 
   const dark = useDarkClasses();
 
@@ -53,43 +55,50 @@
   let attrs = $derived({
     href,
     ...restProps,
-  })
+  });
 
-  let Component = $derived(typeof component === 'undefined' && (href || href === '') ? 'a' : 'button')
+  let Component = $derived(
+    typeof component === 'undefined' && (href || href === '') ? 'a' : 'button'
+  );
 
-  let colors = $derived(ActionsButtonColors(colorsProp, dark))
+  let colors = $derived(ActionsButtonColors(colorsProp, dark));
 
   let theme = useTheme({}, (v) => (theme = v));
 
-  let isDividers = $derived(typeof dividers === 'undefined' ? theme === 'ios' : dividers)
+  let isDividers = $derived(
+    typeof dividers === 'undefined' ? theme === 'ios' : dividers
+  );
 
-  let isBold = $derived(typeof bold === 'undefined'
-    ? theme === 'ios'
-      ? boldIos
-      : boldMaterial
-    : bold)
+  let isBold = $derived(
+    typeof bold === 'undefined'
+      ? theme === 'ios'
+        ? boldIos
+        : boldMaterial
+      : bold
+  );
 
-
-  let c = $derived(useThemeClasses(
-    { ios, material },
-    ActionsButtonClasses(
-      { bold: isBold, fontSizeIos, fontSizeMaterial, dividers: isDividers },
-      colors,
-      dark
-    ),
-    (v) => (c = v),
-    className,
-  ))
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ActionsButtonClasses(
+        { bold: isBold, fontSizeIos, fontSizeMaterial, dividers: isDividers },
+        colors,
+        dark
+      ),
+      (v) => (c = v),
+      className
+    )
+  );
 </script>
 
 <svelte:element
-  this={Component}
-  bind:this={rippleEl.current}
-  class={c.base}
+  this="{Component}"
+  bind:this="{rippleEl.current}"
+  class="{c.base}"
   role="button"
   tabindex="0"
-  onclick={onClick}
+  onclick="{onClick}"
   {...attrs}
 >
-  <slot />
+  {@render children()}
 </svelte:element>

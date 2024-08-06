@@ -1,167 +1,171 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useTheme } from '../shared/use-theme.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
   import { StepperClasses } from '../../shared/classes/StepperClasses.js';
   import { StepperColors } from '../../shared/colors/StepperColors.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component = 'span',
+    value = 0,
+    input = false,
+    inputType = 'text',
+    inputPlaceholder,
+    inputDisabled = false,
+    inputReadonly = false,
+    buttonsOnly = false,
+    rounded,
+    roundedIos,
+    roundedMaterial,
+    small,
+    smallIos,
+    smallMaterial,
+    large,
+    largeIos,
+    largeMaterial,
+    raised,
+    raisedIos,
+    raisedMaterial,
+    outline,
+    outlineIos,
+    outlineMaterial,
+    onInput,
+    onChange,
+    onFocus,
+    onBlur,
+    onMinus,
+    onPlus,
+    touchRipple = true,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string;
+    value?: number;
+    input?: boolean;
+    inputType?: string;
+    inputPlaceholder?: string;
+    inputDisabled?: boolean;
+    inputReadonly?: boolean;
+    buttonsOnly?: boolean;
+    rounded?: boolean;
+    roundedIos?: boolean;
+    roundedMaterial?: boolean;
+    small?: boolean;
+    smallIos?: boolean;
+    smallMaterial?: boolean;
+    large?: boolean;
+    largeIos?: boolean;
+    largeMaterial?: boolean;
+    raised?: boolean;
+    raisedIos?: boolean;
+    raisedMaterial?: boolean;
+    outline?: boolean;
+    outlineIos?: boolean;
+    outlineMaterial?: boolean;
+    onInput?: (e: any) => void;
+    onChange?: (e: any) => void;
+    onFocus?: (e: any) => void;
+    onBlur?: (e: any) => void;
+    onMinus?: (e: any) => void;
+    onPlus?: (e: any) => void;
+    touchRipple?: boolean;
+    children?: Snippet;
+  } = $props();
 
-  export let component = 'span';
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
 
-  export let value = 0;
-  export let input = false;
-  export let inputType = 'text';
-  export let inputPlaceholder = undefined;
-  export let inputDisabled = false;
-  export let inputReadonly = false;
+  let isRounded = $derived(rounded || roundedIos || roundedMaterial);
+  let isSmall = $derived(small || smallIos || smallMaterial);
+  let isLarge = $derived(large || largeIos || largeMaterial);
+  let isRaised = $derived(raised || raisedIos || raisedMaterial);
+  let isOutline = $derived(outline || outlineIos || outlineMaterial);
 
-  export let buttonsOnly = false;
-
-  export let rounded = undefined;
-  export let roundedIos = undefined;
-  export let roundedMaterial = undefined;
-  export let small = undefined;
-  export let smallIos = undefined;
-  export let smallMaterial = undefined;
-  export let large = undefined;
-  export let largeIos = undefined;
-  export let largeMaterial = undefined;
-  export let raised = undefined;
-  export let raisedIos = undefined;
-  export let raisedMaterial = undefined;
-  export let outline = undefined;
-  export let outlineIos = undefined;
-  export let outlineMaterial = undefined;
-
-  export let onInput = undefined;
-  export let onChange = undefined;
-  export let onFocus = undefined;
-  export let onBlur = undefined;
-  export let onMinus = undefined;
-  export let onPlus = undefined;
-
-  export let touchRipple = true;
-
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
-
-  $: isRounded =
-    typeof rounded === 'undefined'
-      ? theme === 'ios'
-        ? roundedIos
-        : roundedMaterial
-      : rounded;
-  $: isSmall =
-    typeof small === 'undefined'
-      ? theme === 'ios'
-        ? smallIos
-        : smallMaterial
-      : small;
-  $: isLarge =
-    typeof large === 'undefined'
-      ? theme === 'ios'
-        ? largeIos
-        : largeMaterial
-      : large;
-  $: isRaised =
-    typeof raised === 'undefined'
-      ? theme === 'ios'
-        ? raisedIos
-        : raisedMaterial
-      : raised;
-  $: isOutline =
-    typeof outline === 'undefined'
-      ? theme === 'ios'
-        ? outlineIos
-        : outlineMaterial
-      : outline;
-
-  const buttonLeftEl = { current: null };
-  const buttonRightEl = { current: null };
+  const buttonLeftEl = $state({ current: null });
+  const buttonRightEl = $state({ current: null });
 
   useTouchRipple(buttonLeftEl, touchRipple);
   useTouchRipple(buttonRightEl, touchRipple);
 
   const dark = useDarkClasses();
 
-  $: colors = StepperColors(colorsProp, dark);
+  let colors = $derived(StepperColors(colorsProp, dark));
 
-  $: size = isLarge ? 'large' : isSmall ? 'small' : 'medium';
-  $: style = isOutline && isRaised ? 'clear' : isOutline ? 'outline' : 'fill';
-  $: shape = isRounded ? 'rounded' : 'square';
+  let size = $derived(isLarge ? 'large' : isSmall ? 'small' : 'medium');
+  let style = $derived(
+    isOutline && isRaised ? 'clear' : isOutline ? 'outline' : 'fill'
+  );
+  let shape = $derived(isRounded ? 'rounded' : 'square');
 
-  $: c = useThemeClasses(
-    { ios, material },
-    StepperClasses({ buttonsOnly }, colors),
-    '',
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      StepperClasses({ buttonsOnly }, colors),
+      '',
+      (v) => (c = v)
+    )
   );
 
-  $: classes = cls(
-    c.base,
-    isRaised && c.raised,
-    c.size[size],
-    c.shape[shape],
-    className
+  let classes = $derived(
+    cls(c.base, isRaised && c.raised, c.size[size], c.shape[shape], className)
   );
-  $: buttonLeftClasses = cls(
-    c.button,
-    c.buttonStyle[style],
-    c.buttonLeftShape[shape]
+  let buttonLeftClasses = $derived(
+    cls(c.button, c.buttonStyle[style], c.buttonLeftShape[shape])
   );
-  $: buttonRightClasses = cls(
-    c.button,
-    c.buttonStyle[style],
-    c.buttonRightShape[shape]
+  let buttonRightClasses = $derived(
+    cls(c.button, c.buttonStyle[style], c.buttonRightShape[shape])
   );
 
-  $: valueClasses = cls(input && c.input, c.value[style]);
+  let valueClasses = $derived(cls(input && c.input, c.value[style]));
 </script>
 
-<svelte:element this={component} class={classes} {...$$restProps}>
+<svelte:element this="{component}" class="{classes}" {...restProps}>
   <span
-    bind:this={buttonLeftEl.current}
-    class={buttonLeftClasses}
+    bind:this="{buttonLeftEl.current}"
+    class="{buttonLeftClasses}"
     role="button"
     tabindex="0"
-    on:click={onMinus}
+    onclick="{onMinus}"
   >
-    <span class={c.hBar} />
+    <span class="{c.hBar}"></span>
   </span>
   {#if input && !buttonsOnly}
     <input
-      class={valueClasses}
-      placeholder={inputPlaceholder}
-      type={inputType}
+      class="{valueClasses}"
+      placeholder="{inputPlaceholder}"
+      type="{inputType}"
       {value}
-      disabled={inputDisabled}
-      readonly={inputReadonly}
-      on:input={onInput}
-      on:change={onChange}
-      on:focus={onFocus}
-      on:blur={onBlur}
+      disabled="{inputDisabled}"
+      readonly="{inputReadonly}"
+      oninput="{onInput}"
+      onchange="{onChange}"
+      onfocus="{onFocus}"
+      onblur="{onBlur}"
     />
   {/if}
   {#if !input && !buttonsOnly}
-    <span class={valueClasses}>{value}</span>
+    <span class="{valueClasses}">{value}</span>
   {/if}
 
   <span
-    bind:this={buttonRightEl.current}
-    class={buttonRightClasses}
+    bind:this="{buttonRightEl.current}"
+    class="{buttonRightClasses}"
     role="button"
     tabindex="0"
-    on:click={onPlus}
+    onclick="{onPlus}"
   >
-    <span class={c.hBar} />
-    <span class={c.vBar} />
+    <span class="{c.hBar}"></span>
+    <span class="{c.vBar}"></span>
   </span>
 </svelte:element>

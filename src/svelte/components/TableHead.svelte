@@ -1,23 +1,34 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { TableHeadClasses } from '../../shared/classes/TableHeadClasses.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
+  let {
+    class: className,
+    ios,
+    material,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    ios?: boolean;
+    material?: boolean;
+    children?: Snippet;
+  } = $props();
 
-  export let ios = undefined;
-  export let material = undefined;
+  let rippleEl = $state({ current: null });
 
-  const rippleEl = { current: null };
-
-  $: c = useThemeClasses(
-    { ios, material },
-    TableHeadClasses({}),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      TableHeadClasses(),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<thead bind:this={rippleEl.current} class={c.base} {...$$restProps}>
-  <slot />
+<thead bind:this="{rippleEl.current}" class="{c.base}" {...restProps}>
+  {@render children()}
 </thead>

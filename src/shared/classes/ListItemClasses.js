@@ -1,6 +1,33 @@
 import { cls } from '../cls.js';
 import { positionClass } from '../position-class.js';
 
+/**
+ * @typedef {Object} ListItemClassesProps
+ * @property {string=} textColor - Text color class name
+ * @property {boolean=} needsTouchRipple - Whether touch ripple is needed
+ * @property {boolean=} isMenuListItemActive - Whether the menu list item is active
+ * @property {boolean=} autoStrongTitle - Whether the strong title is auto
+ * @property {string=} className - The class name
+ * @property {boolean=} menuListItem - Whether the menu list item
+ * @property {boolean=} dividers - Whether dividers are enabled
+ * @property {string=} mediaClass - The media class name
+ * @property {string=} innerClass - The inner class name
+ * @property {string=} contentClass - The content class name
+ * @property {string=} titleWrapClass - The title wrap class name
+ * @property {string=} titleFontSizeIos - The font size for iOS theme
+ * @property {string=} titleFontSizeMaterial - The font size for Material theme
+ * @property {string | boolean} strongTitle - Whether the strong title is enabled
+ * @property {string | boolean} contacts - Whether contacts are enabled
+ */
+
+/**
+ * Generates classes for ListItem component.
+ *
+ * @param {ListItemClassesProps} props - The properties for customizing the ListItem component.
+ * @param {Object} colors - The color classes for different themes and states.
+ * @param {Object} classes - The classes for different themes and states.
+ * @returns {Object} An object containing the generated classes for the ListItem component.
+ */
 export const ListItemClasses = (
   props,
   colors,
@@ -62,12 +89,14 @@ export const ListItemClasses = (
                 : colors.menuListItemActiveBgMaterial
             )
           : menuListItem
-          ? cls(
-              theme === 'ios'
-                ? colors.menuListItemBgIos
-                : colors.menuListItemBgMaterial
-            )
-          : cls(theme === 'ios' ? colors.activeBgIos : colors.activeBgMaterial)
+            ? cls(
+                theme === 'ios'
+                  ? colors.menuListItemBgIos
+                  : colors.menuListItemBgMaterial
+              )
+            : cls(
+                theme === 'ios' ? colors.activeBgIos : colors.activeBgMaterial
+              )
       ),
     },
 

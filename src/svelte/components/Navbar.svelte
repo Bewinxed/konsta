@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { onMount, onDestroy, afterUpdate } from 'svelte';
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
@@ -7,98 +9,133 @@
   import { NavbarColors } from '../../shared/colors/NavbarColors.js';
   import { printText } from '../shared/print-text.js';
 
-  let className = undefined;
-  export { className as class };
+  let {
+    class: className,
+    bgClass = '',
+    innerClass = '',
+    leftClass = '',
+    titleClass = '',
+    subtitleClass = '',
+    rightClass = '',
+    subnavbarClass = '',
+    colors: colorsProp,
+    translucent = true,
+    outline,
+    centerTitle,
+    medium = false,
+    large = false,
+    transparent = false,
+    fontSizeIos = 'text-[17px]',
+    fontSizeMaterial = 'text-[16px]',
+    titleFontSizeIos = 'text-[17px]',
+    titleFontSizeMaterial = 'text-[22px]',
+    titleMediumFontSizeIos = 'text-[24px]',
+    titleMediumFontSizeMaterial = 'text-[24px]',
+    titleLargeFontSizeIos = 'text-[34px]',
+    titleLargeFontSizeMaterial = 'text-[28px]',
+    scrollEl,
+    title,
+    subtitle,
+    ios,
+    material,
+    children,
+    leftSlot,
+    titleSlot,
+    subtitleSlot,
+    rightSlot,
+    subnavbarSlot,
+    ...restProps
+  }: {
+    class?: string;
+    bgClass?: string;
+    innerClass?: string;
+    leftClass?: string;
+    titleClass?: string;
+    subtitleClass?: string;
+    rightClass?: string;
+    subnavbarClass?: string;
+    colors?: string;
+    translucent?: boolean;
+    outline?: boolean;
+    centerTitle?: boolean;
+    medium?: boolean;
+    large?: boolean;
+    transparent?: boolean;
+    fontSizeIos?: string;
+    fontSizeMaterial?: string;
+    titleFontSizeIos?: string;
+    titleFontSizeMaterial?: string;
+    titleMediumFontSizeIos?: string;
+    titleMediumFontSizeMaterial?: string;
+    titleLargeFontSizeIos?: string;
+    titleLargeFontSizeMaterial?: string;
+    scrollEl?: HTMLElement;
+    title?: string;
+    subtitle?: string;
+    ios?: boolean;
+    material?: boolean;
+    children?: Snippet;
+    leftSlot?: Snippet;
+    titleSlot?: Snippet;
+    subtitleSlot?: Snippet;
+    rightSlot?: Snippet;
+    subnavbarSlot?: Snippet;
+  } = $props();
 
-  export let bgClass = '';
-  export let innerClass = '';
-  export let leftClass = '';
-  export let titleClass = '';
-  export let subtitleClass = '';
-  export let rightClass = '';
-  export let subnavbarClass = '';
+  let elRef = $state<HTMLElement>();
+  let titleContainerHeight = $state(0);
+  let bgElRef = $state(null);
+  let innerElRef = $state(null);
+  let titleContainerElRef = $state(null);
+  let titleElRef = $state(null);
+  let subnavbarElRef = $state(null);
 
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let translucent = true;
-  export let outline = undefined;
-  export let centerTitle = undefined;
-
-  export let medium = false;
-  export let large = false;
-  export let transparent = false;
-
-  export let fontSizeIos = 'text-[17px]';
-  export let fontSizeMaterial = 'text-[16px]';
-
-  export let titleFontSizeIos = 'text-[17px]';
-  export let titleFontSizeMaterial = 'text-[22px]';
-
-  export let titleMediumFontSizeIos = 'text-[24px]';
-  export let titleMediumFontSizeMaterial = 'text-[24px]';
-
-  export let titleLargeFontSizeIos = 'text-[34px]';
-  export let titleLargeFontSizeMaterial = 'text-[28px]';
-
-  export let scrollEl = undefined;
-
-  export let title = undefined;
-  export let subtitle = undefined;
-  export let ios = undefined;
-  export let material = undefined;
-
-  let elRef = 0;
-  let titleContainerHeight = 0;
-  let bgElRef = null;
-  let innerElRef = null;
-  let titleContainerElRef = null;
-  let titleElRef = null;
-  let subnavbarElRef = null;
-
-  $: isScrollable = medium || large || transparent;
-  let wasScrollable = isScrollable;
+  let isScrollable = $derived(medium || large || transparent);
+  let wasScrollable = $state(isScrollable);
 
   const dark = useDarkClasses();
 
-  let theme;
-  theme = useTheme((v) => (theme = v));
+  let theme = $derived(useTheme((v) => (theme = v)));
 
-  $: colors = NavbarColors(colorsProp, dark);
+  let colors = $derived(NavbarColors(colorsProp, dark));
 
-  $: isOutline = typeof outline === 'undefined' ? theme === 'ios' : outline;
+  let isOutline = $derived(
+    typeof outline === 'undefined' ? theme === 'ios' : outline
+  );
 
-  $: c = useThemeClasses(
-    { ios, material },
-    NavbarClasses(
-      {
-        bgClass,
-        innerClass,
-        leftClass,
-        titleClass,
-        subtitleClass,
-        rightClass,
-        subnavbarClass,
-        translucent,
-        transparent,
-        outline: isOutline,
-        fontSizeIos,
-        fontSizeMaterial,
-        titleFontSizeIos,
-        titleFontSizeMaterial,
-        medium,
-        large,
-        titleMediumFontSizeIos,
-        titleMediumFontSizeMaterial,
-        titleLargeFontSizeIos,
-        titleLargeFontSizeMaterial,
-        centerTitle:
-          typeof centerTitle === 'undefined' ? theme === 'ios' : centerTitle,
-      },
-      colors,
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      NavbarClasses(
+        {
+          bgClass,
+          innerClass,
+          leftClass,
+          titleClass,
+          subtitleClass,
+          rightClass,
+          subnavbarClass,
+          translucent,
+          transparent,
+          outline: isOutline,
+          fontSizeIos,
+          fontSizeMaterial,
+          titleFontSizeIos,
+          titleFontSizeMaterial,
+          medium,
+          large,
+          titleMediumFontSizeIos,
+          titleMediumFontSizeMaterial,
+          titleLargeFontSizeIos,
+          titleLargeFontSizeMaterial,
+          centerTitle:
+            typeof centerTitle === 'undefined' ? theme === 'ios' : centerTitle,
+        },
+        colors
+      ),
+      (v) => (c = v),
       className
-    ),
-    className,
-    (v) => (c = v)
+    )
   );
 
   const getScrollEl = () => {
@@ -108,13 +145,23 @@
     return scrollEl || scrollEl;
   };
 
-  const onScroll = (e) => {
-    if (!e) {
-      e = {
-        target: getScrollEl(),
-      };
+  const onScroll = (
+    e?:
+      | Event
+      | {
+          target: HTMLElement;
+        }
+      | {
+          target: {
+            scrollTop: number;
+          };
+        }
+  ) => {
+    let target: HTMLElement;
+    if (!e || !e.target) {
+      target = getScrollEl();
     }
-    const { scrollTop } = e.target;
+    const { scrollTop } = target;
     if (!isScrollable) {
       if (wasScrollable) {
         if (titleElRef) {
@@ -187,7 +234,7 @@
     }
   };
 
-  afterUpdate(() => {
+  $effect(() => {
     calcSize();
     if (!wasScrollable && isScrollable) {
       initScroll();
@@ -208,37 +255,37 @@
   });
 </script>
 
-<div class={c.base} bind:this={elRef} {...$$restProps}>
-  <div class={c.bg} bind:this={bgElRef} />
-  <div class={c.inner} bind:this={innerElRef}>
-    {#if $$slots.left}
-      <div class={c.left}><slot name="left" /></div>
+<div class="{c.base}" bind:this="{elRef}" {...restProps}>
+  <div class="{c.bg}" bind:this="{bgElRef}"></div>
+  <div class="{c.inner}" bind:this="{innerElRef}">
+    {#if leftSlot}
+      <div class="{c.left}">{@render leftSlot()}</div>
     {/if}
-    {#if $$slots.title || $$slots.subtitle || title || subtitle}
-      <div class={c.title} bind:this={titleElRef}>
+    {#if titleSlot || subtitleSlot || title || subtitle}
+      <div class="{c.title}" bind:this="{titleElRef}">
         {printText(title)}
-        <slot name="title" />
-        {#if subtitle || $$slots.subtitle}
-          <div class={c.subtitle}>
-            {printText(subtitle)}<slot name="subtitle" />
+        {@render titleSlot()}
+        {#if subtitle || subtitleSlot}
+          <div class="{c.subtitle}">
+            {printText(subtitle)}{@render subtitleSlot()}
           </div>
         {/if}
       </div>
     {/if}
-    {#if $$slots.right}
-      <div class={c.right}><slot name="right" /></div>
+    {#if rightSlot}
+      <div class="{c.right}">{@render rightSlot()}</div>
     {/if}
-    <slot />
+    {@render children()}
   </div>
   {#if large || medium}
-    <div class={c.titleContainer} bind:this={titleContainerElRef}>
+    <div class="{c.titleContainer}" bind:this="{titleContainerElRef}">
       {printText(title)}
-      <slot name="title" />
+      {@render titleSlot()}
     </div>
   {/if}
-  {#if $$slots.subnavbar}
-    <div class={c.subnavbar} bind:this={subnavbarElRef}>
-      <slot name="subnavbar" />
+  {#if subnavbarSlot}
+    <div class="{c.subnavbar}" bind:this="{subnavbarElRef}">
+      {@render subnavbarSlot()}
     </div>
   {/if}
 </div>

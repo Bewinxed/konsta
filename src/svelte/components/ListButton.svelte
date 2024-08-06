@@ -1,90 +1,110 @@
-<script>
+<script lang="ts">
+  import { Component, Snippet } from 'svelte';
+
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
   import { ListButtonClasses } from '../../shared/classes/ListButtonClasses.js';
   import { ListButtonColors } from '../../shared/colors/ListButtonColors.js';
   import { useTheme } from '../shared/use-theme.js';
   import { getReactiveContext } from '../shared/get-reactive-context.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    href,
+    target,
+    type,
+    value,
+    linkProps = {},
+    touchRipple = true,
+    linkComponent = 'a',
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    href?: string;
+    target?: string;
+    type?: string;
+    value?: any;
+    linkProps?: any;
+    touchRipple?: boolean;
+    linkComponent?: string | Component;
+    children?: Snippet;
+  } = $props();
 
   // Link props
-  export let href = undefined;
-  export let target = undefined;
 
   // Button props
-  export let type = undefined;
-  export let value = undefined;
 
-  export let linkProps = {};
-
-  export let touchRipple = true;
-
-  export let linkComponent = 'a';
-
-  let ListDividersContext = getReactiveContext(
-    'ListDividersContext',
-    (value) => {
+  let ListDividersContext = $state<{ value?: boolean }>(
+    getReactiveContext('ListDividersContext', (value) => {
       ListDividersContext = value || {};
-    }
-  ) || { value: false };
+    }) || { value: false }
+  );
 
-  const rippleEl = { current: null };
+  let rippleEl = $state({ current: null });
 
-  let theme;
-  theme = useTheme({ ios, material }, (v) => (theme = v));
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
 
-  $: useTouchRipple(rippleEl, touchRipple);
+  $effect(() => useTouchRipple(rippleEl, touchRipple));
 
   const dark = useDarkClasses();
 
-  $: colors = ListButtonColors(colorsProp, dark);
+  let colors = $derived(ListButtonColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ListButtonClasses(
-      { dividers: ListDividersContext.value },
-      colors,
-      className,
-      theme
-    ),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ListButtonClasses(
+        { dividers: ListDividersContext.value },
+        colors,
+        className
+      ),
+      (v) => (c = v),
+      className
+    )
   );
 
-  $: isLink = !!href || href === '';
-  $: hrefComputed =
-    !isLink || href === true || href === false ? undefined : href || '';
-  $: buttonAttrs = { href: hrefComputed, target, type, value, ...linkProps };
+  let isLink = $derived(!!href || href === '');
+  let hrefComputed = $derived(
+    !isLink || href === true || href === false ? undefined : href || ''
+  );
+  let buttonAttrs = $derived({
+    href: hrefComputed,
+    target,
+    type,
+    value,
+    ...linkProps,
+  });
 
   const ButtonComponent = isLink ? linkComponent : 'button';
 </script>
 
-<li class={c.base} {...$$restProps}>
+<li class="{c.base}" {...restProps}>
   {#if typeof ButtonComponent === 'string'}
     <!-- svelte-ignore a11y-missing-attribute -->
     <svelte:element
-      this={ButtonComponent}
-      bind:this={rippleEl.current}
-      class={c.button}
+      this="{ButtonComponent}"
+      bind:this="{rippleEl.current}"
+      class="{c.button}"
       {...buttonAttrs}
     >
-      <slot />
+      {@render children()}
     </svelte:element>
   {:else}
-    <svelte:component
-      this={ButtonComponent}
-      bind:this={rippleEl.current}
-      class={c.button}
+    <ButtonComponent
+      this="{ButtonComponent}"
+      bind:this="{rippleEl.current}"
+      class="{c.button}"
       {...buttonAttrs}
     >
-      <slot />
-    </svelte:component>
+      {@render children()}
+    </ButtonComponent>
   {/if}
 </li>

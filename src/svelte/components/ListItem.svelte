@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
+  import { Component, Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
   import ChevronIcon from './icons/ChevronIcon.svelte';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { ListItemClasses } from '../../shared/classes/ListItemClasses.js';
@@ -10,291 +12,354 @@
   import { getReactiveContext } from '../shared/get-reactive-context.js';
   import { printText } from '../shared/print-text.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let component = 'li';
-  export let mediaClass = '';
-  export let innerClass = '';
-  export let contentClass = '';
-  export let titleWrapClass = '';
-
-  export let titleFontSizeIos = 'text-[17px]';
-  export let titleFontSizeMaterial = 'text-[16px]';
-
-  export let withMedia = undefined;
-  export let withTitle = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component = 'li',
+    mediaClass = '',
+    innerClass = '',
+    contentClass = '',
+    titleWrapClass = '',
+    titleFontSizeIos = 'text-[17px]',
+    titleFontSizeMaterial = 'text-[16px]',
+    withMedia,
+    withTitle,
+    title = '',
+    subtitle = '',
+    text = '',
+    after = '',
+    header = '',
+    footer = '',
+    menuListItem = false,
+    menuListItemActive = false,
+    groupTitle = false,
+    strongTitle = 'auto',
+    label = false,
+    chevron,
+    chevronIos = true,
+    chevronMaterial = true,
+    href,
+    target,
+    dividers,
+    contacts = false,
+    link = false,
+    linkComponent = 'a',
+    linkProps = {},
+    touchRipple = true,
+    onClick,
+    headerSlot,
+    mediaSlot,
+    titleSlot,
+    subtitleSlot,
+    textSlot,
+    innerSlot,
+    contentSlot,
+    footerSlot,
+    afterSlot,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string | Component;
+    mediaClass?: string;
+    innerClass?: string;
+    contentClass?: string;
+    titleWrapClass?: string;
+    titleFontSizeIos?: string;
+    titleFontSizeMaterial?: string;
+    withMedia?: boolean;
+    withTitle?: boolean;
+    title?: string;
+    subtitle?: string;
+    text?: string;
+    after?: string;
+    header?: string;
+    footer?: string;
+    menuListItem?: boolean;
+    menuListItemActive?: boolean;
+    groupTitle?: boolean;
+    strongTitle?: boolean | 'auto';
+    label?: boolean;
+    chevron?: boolean;
+    chevronIos?: boolean;
+    chevronMaterial?: boolean;
+    href?: boolean | string;
+    target?: string;
+    dividers?: boolean;
+    contacts?: string | boolean;
+    link?: boolean;
+    linkComponent?: string | Component;
+    linkProps?: any;
+    touchRipple?: boolean;
+    headerSlot?: Snippet;
+    innerSlot?: Snippet;
+    contentSlot?: Snippet;
+    mediaSlot: Snippet;
+    titleSlot: Snippet;
+    subtitleSlot: Snippet;
+    textSlot: Snippet;
+    footerSlot: Snippet;
+    afterSlot: Snippet;
+    onClick?: (e: any) => void;
+    children?: Snippet;
+  } = $props();
 
   // Content props
-  export let title = '';
-  export let subtitle = '';
-  export let text = '';
-  export let after = '';
-  export let header = '';
-  export let footer = '';
-
-  export let menuListItem = false;
-  export let menuListItemActive = false;
-
-  export let groupTitle = false;
 
   // Title
-  export let strongTitle = 'auto';
 
   // Label props
-  export let label = false;
 
   // Link props
-  export let chevron = undefined;
-  export let chevronIos = true;
-  export let chevronMaterial = true;
-  export let href = undefined;
-  export let target = undefined;
-  export let dividers = undefined;
-  export let contacts = false;
 
-  export let link = false;
-  export let linkComponent = 'a';
-  export let linkProps = {};
-
-  export let touchRipple = true;
-
-  export let onClick = undefined;
-
-  let ListDividersContext = getReactiveContext(
-    'ListDividersContext',
-    (value) => {
+  let ListDividersContext = $derived<any>(
+    getReactiveContext('ListDividersContext', (value) => {
       ListDividersContext = value || {};
-    }
-  ) || { value: false };
+    }) || { value: false }
+  );
 
-  const rippleEl = { current: null };
+  let rippleEl = $state({ current: null });
 
-  let theme;
-  theme = useTheme({ ios, material }, (v) => (theme = v));
+  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
-  $: hasChevron =
+  let hasChevron = $derived(
     typeof chevron === 'undefined'
       ? theme === 'ios'
         ? chevronIos
         : chevronMaterial
-      : chevron;
+      : chevron
+  );
 
-  $: colors = ListItemColors(colorsProp, dark);
+  let colors = $derived(ListItemColors(colorsProp, dark));
 
-  $: isMenuListItemActive = menuListItem && menuListItemActive;
+  let isMenuListItemActive = $derived(menuListItem && menuListItemActive);
 
-  $: textColor =
+  let textColor = $derived(
     colors[
       `${
         isMenuListItemActive
           ? 'menuListItemActiveText'
           : menuListItem
-          ? 'menuListItemText'
-          : 'text'
+            ? 'menuListItemText'
+            : 'text'
       }${theme === 'ios' ? 'Ios' : 'Material'}`
-    ];
-
-  $: isLink = !!href || href === '' || menuListItem || link;
-  $: isLabel = !!label;
-
-  $: needsTouchRipple =
-    theme === 'material' && (isLabel || isLink) && touchRipple;
-
-  $: useTouchRipple(rippleEl, needsTouchRipple);
-
-  $: hrefComputed =
-    href === true || href === false || typeof href === 'undefined'
-      ? undefined
-      : href || '';
-  $: ItemContentComponent = isLink ? linkComponent : isLabel ? 'label' : 'div';
-  $: linkPropsComputed = isLink
-    ? { href: hrefComputed, target, ...linkProps }
-    : {};
-
-  $: isMediaItem =
-    (title || $$slots.title) &&
-    withTitle !== false &&
-    (subtitle || text || $$slots.subtitle || $$slots.text);
-
-  $: autoStrongTitle =
-    strongTitle === 'auto' &&
-    (title || $$slots.title) &&
-    withTitle !== false &&
-    (subtitle || text || $$slots.subtitle || $$slots.text);
-
-  $: c = useThemeClasses(
-    { ios, material },
-    ListItemClasses(
-      {
-        menuListItem,
-        dividers:
-          typeof dividers === 'undefined'
-            ? ListDividersContext.value
-            : dividers,
-        mediaClass,
-        innerClass,
-        contentClass,
-        titleWrapClass,
-        titleFontSizeIos,
-        titleFontSizeMaterial,
-        strongTitle,
-        contacts: contacts === 'false' ? '' : contacts,
-      },
-      colors,
-      {
-        isMediaItem,
-        theme,
-        textColor,
-        needsTouchRipple,
-        isMenuListItemActive,
-        darkClasses: dark,
-        autoStrongTitle,
-        className,
-      }
-    ),
-    className,
-    (v) => (c = v)
+    ]
   );
 
-  $: itemContentClasses =
-    isLink || isLabel ? c.itemContent.link : c.itemContent.default;
+  let isLink = $derived(!!href || href === '' || menuListItem || link);
+  let isLabel = $derived(!!label);
 
-  $: titleClasses = menuListItem
-    ? c.title.menuListItem
-    : strongTitle === true || autoStrongTitle
-    ? c.title.strong
-    : c.title.default;
+  let needsTouchRipple = $derived(
+    theme === 'material' && (isLabel || isLink) && touchRipple
+  );
+
+  $effect(() => useTouchRipple(rippleEl, needsTouchRipple));
+
+  let hrefComputed = $derived(
+    href === true || href === false || typeof href === 'undefined'
+      ? undefined
+      : href || ''
+  );
+
+  let ItemContentComponent = $derived(
+    isLink ? linkComponent : isLabel ? 'label' : 'div'
+  );
+
+  let linkPropsComputed = $derived(
+    isLink ? { href: hrefComputed, target, ...linkProps } : {}
+  );
+
+  let isMediaItem = $derived(
+    (title || titleSlot) &&
+      withTitle !== false &&
+      (subtitle || text || subtitleSlot || textSlot)
+  );
+
+  let autoStrongTitle = $derived(
+    strongTitle === 'auto' &&
+      (title || titleSlot) &&
+      withTitle !== false &&
+      (subtitle || text || subtitleSlot || textSlot)
+  );
+
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ListItemClasses(
+        {
+          menuListItem,
+          dividers:
+            typeof dividers === 'undefined'
+              ? ListDividersContext.value
+              : dividers,
+          mediaClass,
+          innerClass,
+          contentClass,
+          titleWrapClass,
+          titleFontSizeIos,
+          titleFontSizeMaterial,
+          strongTitle,
+          contacts: contacts === 'false' ? '' : contacts,
+        },
+        colors,
+        {
+          isMediaItem,
+          theme,
+          textColor,
+          needsTouchRipple,
+          isMenuListItemActive,
+          darkClasses: dark,
+          autoStrongTitle,
+          className,
+        }
+      ),
+      (v) => (c = v),
+      className
+    )
+  );
+
+  let itemContentClasses = $derived(
+    isLink || isLabel ? c.itemContent.link : c.itemContent.default
+  );
+
+  let titleClasses = $derived(
+    menuListItem
+      ? c.title.menuListItem
+      : strongTitle === true || autoStrongTitle
+        ? c.title.strong
+        : c.title.default
+  );
 </script>
 
 {#if groupTitle}
   <svelte:element
-    this={component}
-    class={cls(c.groupTitle, className)}
-    on:click={onClick}
+    this="{component}"
+    class="{cls(c.groupTitle, className)}"
+    onclick="{onClick}"
   >
     {title}
-    <slot name="title" />
-    <slot />
+    {@render titleSlot()}
+    {@render children()}
   </svelte:element>
 {:else}
   <svelte:element
-    this={component}
-    class={c.base}
-    {...$$restProps}
-    on:click={onClick}
+    this="{component}"
+    class="{c.base}"
+    {...restProps}
+    onclick="{onClick}"
   >
     {#if typeof ItemContentComponent === 'string'}
       <svelte:element
-        this={ItemContentComponent}
-        bind:this={rippleEl.current}
-        class={itemContentClasses}
+        this="{ItemContentComponent}"
+        bind:this="{rippleEl.current}"
+        class="{itemContentClasses}"
         {...linkPropsComputed}
       >
-        {#if $$slots.media && withMedia !== false}
-          <div class={c.media}><slot name="media" /></div>
+        {#if mediaSlot && withMedia !== false}
+          <div class="{c.media}">{@render mediaSlot()}</div>
         {/if}
-        <div class={c.inner}>
-          {#if header || $$slots.header}
-            <div class={c.header}>
-              {printText(header)}<slot name="header" />
+        <div class="{c.inner}">
+          {#if header || headerSlot}
+            <div class="{c.header}">
+              {printText(header)}{@render headerSlot()}
             </div>
           {/if}
-          {#if ((title || $$slots.title) && withTitle !== false) || after || $$slots.after}
-            <div class={c.titleWrap}>
-              {#if (title || $$slots.title) && withTitle !== false}
-                <div class={titleClasses}>
+          {#if ((title || titleSlot) && withTitle !== false) || after || afterSlot}
+            <div class="{c.titleWrap}">
+              {#if (title || titleSlot) && withTitle !== false}
+                <div class="{titleClasses}">
                   {printText(title)}
-                  <slot name="title" />
+                  {@render titleSlot()}
                 </div>
               {/if}
-              {#if after || $$slots.after}
-                <div class={c.after}>
+              {#if after || afterSlot}
+                <div class="{c.after}">
                   {printText(after)}
-                  <slot name="after" />
+                  {@render afterSlot()}
                 </div>
               {/if}
               {#if isLink && hasChevron && !menuListItem}
-                <ChevronIcon class={c.chevron} />
+                <ChevronIcon class="{c.chevron}" />
               {/if}
             </div>
           {/if}
-          {#if subtitle || $$slots.subtitle}
-            <div class={c.subtitle}>
-              {printText(subtitle)}<slot name="subtitle" />
+          {#if subtitle || subtitleSlot}
+            <div class="{c.subtitle}">
+              {printText(subtitle)}{@render subtitleSlot()}
             </div>
           {/if}
-          {#if text || $$slots.text}
-            <div class={c.text}>{printText(text)}<slot name="text" /></div>
+          {#if text || textSlot}
+            <div class="{c.text}">{printText(text)}{@render textSlot()}</div>
           {/if}
-          {#if footer || $$slots.footer}
-            <div class={c.footer}>
-              {printText(footer)}<slot name="footer" />
+          {#if footer || footerSlot}
+            <div class="{c.footer}">
+              {printText(footer)}{@render footerSlot()}
             </div>
           {/if}
-          <slot name="inner" />
+          {@render innerSlot()}
         </div>
-        <slot name="content" />
+        {@render contentSlot()}
       </svelte:element>
     {:else}
       <svelte:component
-        this={ItemContentComponent}
-        bind:this={rippleEl.current}
-        class={itemContentClasses}
+        this="{ItemContentComponent}"
+        bind:this="{rippleEl.current}"
+        class="{itemContentClasses}"
         {...linkPropsComputed}
       >
-        {#if $$slots.media}
-          <div class={c.media}><slot name="media" /></div>
+        {#if mediaSlot}
+          <div class="{c.media}">{@render mediaSlot()}</div>
         {/if}
-        <div class={c.inner}>
-          {#if header || $$slots.header}
-            <div class={c.header}>
-              {printText(header)}<slot name="header" />
+        <div class="{c.inner}">
+          {#if header || headerSlot}
+            <div class="{c.header}">
+              {printText(header)}{@render headerSlot()}
             </div>
           {/if}
-          {#if ((title || $$slots.title) && withTitle !== false) || after || $$slots.after}
-            <div class={c.titleWrap}>
-              {#if (title || $$slots.title) && withTitle !== false}
-                <div class={titleClasses}>
+          {#if ((title || titleSlot) && withTitle !== false) || after || afterSlot}
+            <div class="{c.titleWrap}">
+              {#if (title || titleSlot) && withTitle !== false}
+                <div class="{titleClasses}">
                   {printText(title)}
-                  <slot name="title" />
+                  {@render titleSlot()}
                 </div>
               {/if}
-              {#if after || $$slots.after}
-                <div class={c.after}>
+              {#if after || afterSlot}
+                <div class="{c.after}">
                   {printText(after)}
-                  <slot name="after" />
+                  {@render afterSlot()}
                 </div>
               {/if}
               {#if isLink && hasChevron && !menuListItem}
-                <ChevronIcon class={c.chevron} />
+                <ChevronIcon class="{c.chevron}" />
               {/if}
             </div>
           {/if}
-          {#if subtitle || $$slots.subtitle}
-            <div class={c.subtitle}>
-              {printText(subtitle)}<slot name="subtitle" />
+          {#if subtitle || subtitleSlot}
+            <div class="{c.subtitle}">
+              {printText(subtitle)}{@render subtitleSlot()}
             </div>
           {/if}
-          {#if text || $$slots.text}
-            <div class={c.text}>{printText(text)}<slot name="text" /></div>
+          {#if text || textSlot}
+            <div class="{c.text}">{printText(text)}{@render textSlot()}</div>
           {/if}
-          {#if footer || $$slots.footer}
-            <div class={c.footer}>
-              {printText(footer)}<slot name="footer" />
+          {#if footer || footerSlot}
+            <div class="{c.footer}">
+              {printText(footer)}{@render footerSlot()}
             </div>
           {/if}
-          <slot name="inner" />
+          {@render innerSlot()}
         </div>
-        <slot name="content" />
+        {@render contentSlot()}
       </svelte:component>
     {/if}
-    <slot />
+    {@render children()}
   </svelte:element>
 {/if}

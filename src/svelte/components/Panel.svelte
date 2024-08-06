@@ -1,43 +1,60 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
   import { PanelClasses } from '../../shared/classes/PanelClasses.js';
   import { PanelColors } from '../../shared/colors/PanelColors.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    size = 'w-72 h-screen',
+    side = 'left',
+    opened = false,
+    backdrop = true,
+    floating = false,
+    onBackdropClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    size?: string;
+    side?: string;
+    opened?: boolean;
+    backdrop?: boolean;
+    floating?: boolean;
+    onBackdropClick?: () => void;
+    children?: Snippet;
+  } = $props();
 
-  export let size = 'w-72 h-screen';
-  export let side = 'left';
-  export let opened = false;
-  export let backdrop = true;
-  export let floating = false;
-  export let onBackdropClick = undefined;
-
-  $: state = opened ? 'opened' : 'closed';
+  let _state = $derived(opened ? 'opened' : 'closed');
 
   const dark = useDarkClasses();
 
-  $: colors = PanelColors(colorsProp, dark);
+  let colors = $derived(PanelColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    PanelClasses({ size, floating }, colors, className),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      PanelClasses({ size, floating }, colors, className),
+      (v) => (c = v),
+      className
+    )
   );
 
-  $: classes = cls(c.base, c[side][state]);
+  let classes = $derived(cls(c.base, c[side][_state]));
 </script>
 
 {#if backdrop}
-  <div class={c.backdrop[state]} on:click={onBackdropClick} />
+  <div class="{c.backdrop[_state]}" onclick="{onBackdropClick}"></div>
 {/if}
-<div class={classes} {...$$restProps}>
-  <slot />
+<div class="{classes}" {...restProps}>
+  {@render children()}
 </div>

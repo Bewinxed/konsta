@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
   import { ListClasses } from '../../shared/classes/ListClasses.js';
   import { ListColors } from '../../shared/colors/ListColors.js';
@@ -7,28 +9,50 @@
   import { useTheme } from '../shared/use-theme.js';
   import { setReactiveContext } from '../shared/set-reactive-context.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let margin = 'my-8';
-  export let dividers = undefined;
-  export let dividersIos = true;
-  export let dividersMaterial = false;
-  export let inset = undefined;
-  export let insetIos = undefined;
-  export let insetMaterial = undefined;
-  export let strong = undefined;
-  export let strongIos = undefined;
-  export let strongMaterial = undefined;
-  export let outline = undefined;
-  export let outlineIos = undefined;
-  export let outlineMaterial = undefined;
-  export let nested = false;
-  export let menuList = false;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    margin = 'my-8',
+    dividers,
+    dividersIos = true,
+    dividersMaterial = false,
+    inset,
+    insetIos,
+    insetMaterial,
+    strong,
+    strongIos,
+    strongMaterial,
+    outline,
+    outlineIos,
+    outlineMaterial,
+    nested = false,
+    menuList = false,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    margin?: string;
+    dividers?: boolean;
+    dividersIos?: boolean;
+    dividersMaterial?: boolean;
+    inset?: boolean;
+    insetIos?: boolean;
+    insetMaterial?: boolean;
+    strong?: boolean;
+    strongIos?: boolean;
+    strongMaterial?: boolean;
+    outline?: boolean;
+    outlineIos?: boolean;
+    outlineMaterial?: boolean;
+    nested?: boolean;
+    menuList?: boolean;
+    children?: Snippet;
+  } = $props();
 
   let theme;
   theme = useTheme({}, (v) => (theme = v));
@@ -43,26 +67,27 @@
         : dividersMaterial
       : dividers;
   /* eslint-enable */
-  $: isStrong =
+  let isStrong = $derived(
     typeof strong === 'undefined'
       ? theme === 'ios'
         ? strongIos
         : strongMaterial
-      : strong;
-  $: isOutline =
+      : strong
+  );
+  let isOutline = $derived(
     typeof outline === 'undefined'
       ? theme === 'ios'
         ? outlineIos
         : outlineMaterial
-      : outline;
-  /* eslint-disable */
-  $: isInset =
+      : outline
+  );
+  let isInset = $derived(
     typeof inset === 'undefined'
       ? theme === 'ios'
         ? insetIos
         : insetMaterial
-      : inset;
-  /* eslint-enable */
+      : inset
+  );
 
   // eslint-disable-next-line
   setReactiveContext('ListDividersContext', () => {
@@ -71,32 +96,39 @@
     };
   });
 
-  $: colors = ListColors(colorsProp, dark);
+  let colors = $derived(ListColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ListClasses(
-      { nested, margin, inset: isInset, outline: isOutline, strong: isStrong },
-      colors,
-      className
-    ),
-    '',
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ListClasses(
+        {
+          nested,
+          margin,
+          inset: isInset,
+          outline: isOutline,
+          strong: isStrong,
+        },
+        colors,
+        className
+      ),
+      (v) => (c = v),
+      ''
+    )
   );
 
-  $: classes = cls(
-    c.base,
-
-    isInset && c.inset,
-
-    menuList && c.menuList,
-
-    className
+  let classes = $derived(
+    cls(
+      c.value.base,
+      isInset && c.value.inset,
+      menuList && c.value.menuList,
+      className
+    )
   );
 </script>
 
-<div class={classes} {...$$restProps}>
-  <ul class={c.ul}>
-    <slot />
+<div class="{classes}" {...restProps}>
+  <ul class="{c.ul}">
+    {@render children()}
   </ul>
 </div>

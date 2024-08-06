@@ -1,4 +1,6 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { BlockClasses } from '../../shared/classes/BlockClasses.js';
   import { BlockColors } from '../../shared/colors/BlockColors.js';
   import { cls } from '../../shared/cls.js';
@@ -6,82 +8,110 @@
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    margin = 'my-8',
+    padding = 'py-4',
+    inset,
+    insetIos = false,
+    insetMaterial = false,
+    strong,
+    strongIos = false,
+    strongMaterial = false,
+    outline,
+    outlineIos = false,
+    outlineMaterial = false,
+    nested,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: {
+      ios?: string;
+      material?: string;
+    };
+    ios?: boolean;
+    material?: boolean;
+    margin?: string;
+    padding?: string;
+    inset?: boolean;
+    insetIos?: boolean;
+    insetMaterial?: boolean;
+    strong?: boolean;
+    strongIos?: boolean;
+    strongMaterial?: boolean;
+    outline?: boolean;
+    outlineIos?: boolean;
+    outlineMaterial?: boolean;
+    nested?: boolean;
+    children?: Snippet;
+  } = $props();
 
-  export let margin = 'my-8';
-  export let padding = 'py-4';
-  export let inset = undefined;
-  export let insetIos = false;
-  export let insetMaterial = false;
-  export let strong = undefined;
-  export let strongIos = false;
-  export let strongMaterial = false;
-  export let outline = undefined;
-  export let outlineIos = false;
-  export let outlineMaterial = false;
-  export let nested = undefined;
-
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
+  let theme = $derived(useTheme({}, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
-  $: isStrong =
+  let isStrong = $derived(
     typeof strong === 'undefined'
       ? theme === 'ios'
         ? strongIos
         : strongMaterial
-      : strong;
+      : strong
+  );
 
-  $: isOutline =
+  let isOutline = $derived(
     typeof outline === 'undefined'
       ? theme === 'ios'
         ? outlineIos
         : outlineMaterial
-      : outline;
-  $: isInset =
+      : outline
+  );
+
+  let isInset = $derived(
     typeof inset === 'undefined'
       ? theme === 'ios'
         ? insetIos
         : insetMaterial
-      : inset;
-
-  $: colors = BlockColors(colorsProp, dark);
-
-  $: c = useThemeClasses(
-    { ios, material },
-    BlockClasses(
-      {
-        margin,
-        padding,
-        nested,
-        inset: isInset,
-        outline: isOutline,
-        strong: isStrong,
-      },
-      colors,
-      className
-    ),
-    '',
-    (v) => (c = v)
+      : inset
   );
 
-  $: classes = cls(
-    // base
-    c.base,
+  let colors = $derived(BlockColors(colorsProp, dark));
 
-    // inset
-    isInset && c.inset,
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BlockClasses(
+        {
+          margin,
+          padding,
+          inset: isInset,
+          outline: isOutline,
+          strong: isStrong,
+        },
+        colors,
+        className
+      ),
+      (v) => (c = v),
+      ''
+    )
+  );
 
-    className
+  let classes = $derived(
+    cls(
+      // base
+      c.base,
+
+      // inset
+      isInset && c.inset,
+
+      className
+    )
   );
 </script>
 
-<div class={classes} {...$$restProps}>
-  <slot />
+<div class="{classes}" {...restProps}>
+  {@render children()}
 </div>

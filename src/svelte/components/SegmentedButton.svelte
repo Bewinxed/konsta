@@ -1,22 +1,35 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import Button from './Button.svelte';
 
-  export let active = false;
-  export let strong = false;
-  export let rounded = false;
+  let {
+    active = false,
+    strong = false,
+    rounded = false,
+    outline = false,
+    clear = false,
+    children,
+    ...restProps
+  }: {
+    active?: boolean;
+    strong?: boolean;
+    rounded?: boolean;
+    outline?: boolean;
+    clear?: boolean;
+    children?: Snippet;
+  } = $props();
 
   // svelte-ignore unused-export-let
-  export let outline = false;
   // svelte-ignore unused-export-let
-  export let clear = false;
 </script>
 
 <Button
   segmented
-  segmentedActive={active}
-  segmentedStrong={strong}
-  rounded={rounded && strong}
-  {...$$restProps}
+  segmentedActive="{active}"
+  segmentedStrong="{strong}"
+  rounded="{rounded && strong}"
+  {...restProps}
 >
-  <slot />
+  {@render children()}
 </Button>

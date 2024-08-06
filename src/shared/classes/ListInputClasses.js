@@ -1,5 +1,22 @@
 import { cls } from '../cls.js';
 
+/**
+ * @typedef {Object} ListInputClassesProps
+ * @property {string | boolean} error - Error message
+ * @property {string} type - Input type
+ * @property {boolean} outline - Outline style
+ * @property {string=} inputClassName - Input class name
+ * @property {string} inputClass - Input class
+ */
+
+/**
+ * Generates classes for ListInput component.
+ *
+ * @param {ListInputClassesProps} props - The properties for customizing the ListInput component.
+ * @param {Object} colors - The color classes for different themes and states.
+ * @param {Object} classes - The classes for different themes and states.
+ * @returns {Object} An object containing the generated classes for the ListInput component.
+ */
 export const ListInputClasses = (
   props,
   colors,
@@ -111,16 +128,16 @@ export const ListInputClasses = (
           error
             ? colors.errorBorder
             : isFocused
-            ? colors.outlineBorderFocusIos
-            : colors.outlineBorderIos,
+              ? colors.outlineBorderFocusIos
+              : colors.outlineBorderIos,
           'h-full border rounded-lg -z-10'
         ),
       material: cls(
         error
           ? colors.errorBorder
           : isFocused
-          ? colors.outlineBorderFocusMaterial
-          : colors.outlineBorderMaterial,
+            ? colors.outlineBorderFocusMaterial
+            : colors.outlineBorderMaterial,
         outline && cls('h-full border rounded -z-10', isFocused && 'border-2'),
         !outline &&
           cls('border-b h-px origin-bottom', isFocused && 'scale-y-[2]')

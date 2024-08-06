@@ -1,31 +1,46 @@
-<script>
+<script lang="ts">
+  import { Snippet } from 'svelte';
+
   import { BlockTitleClasses } from '../../shared/classes/BlockTitleClasses.js';
   import { BlockTitleColors } from '../../shared/colors/BlockTitleColors.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    withBlock = true,
+    medium = false,
+    large = false,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: any;
+    ios?: any;
+    material?: any;
+    withBlock?: any;
+    medium?: any;
+    large?: any;
+    children?: Snippet;
+  } = $props();
 
-  export let withBlock = true;
-  export let medium = false;
-  export let large = false;
   const dark = useDarkClasses();
 
-  $: colors = BlockTitleColors(colorsProp, dark);
+  let colors = $derived(BlockTitleColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    BlockTitleClasses({ withBlock, medium, large }, colors),
-    className,
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      BlockTitleClasses({ withBlock, medium, large }, colors),
+      (v) => (c = v),
+      className
+    )
   );
 </script>
 
-<div class={c.base} {...$$restProps}>
-  <slot />
+<div class="{c.base}" {...restProps}>
+  {@render children()}
 </div>

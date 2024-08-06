@@ -64,16 +64,18 @@
 
   calcTheme();
 
-  let classes = $derived(AppClasses(  { theme, dark, touchRipple, safeAreas }, currentTheme, className))
+  let classes = $derived(
+    AppClasses({ theme, dark, touchRipple, safeAreas }, currentTheme, className)
+  );
 </script>
 
 <KonstaProvider
-  theme={currentTheme}
+  theme="{currentTheme}"
   {dark}
   {touchRipple}
-  autoThemeDetection={false}
+  autoThemeDetection="{false}"
 >
-  <div class={classes} {...restProps}>
+  <div class="{classes}" {...restProps}>
     {@render children()}
   </div>
 </KonstaProvider>

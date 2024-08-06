@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
+  import { Component, Snippet } from 'svelte';
+
   import { cls } from '../../shared/cls.js';
-  import { useTouchRipple } from '../shared/use-touch-ripple.js';
+  import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useTheme } from '../shared/use-theme.js';
 
@@ -8,208 +10,251 @@
   import { ButtonClasses } from '../../shared/classes/ButtonClasses.js';
   import { ButtonColors } from '../../shared/colors/ButtonColors.js';
 
-  let className = undefined;
-  export { className as class };
-  let colorsProp = undefined;
-  export { colorsProp as colors };
-  export let ios = undefined;
-  export let material = undefined;
-
-  export let component = 'button'; // or 'a'
+  let {
+    class: className,
+    colors: colorsProp,
+    ios,
+    material,
+    component: Component = 'button',
+    href,
+    disabled = false,
+    outline,
+    outlineIos,
+    outlineMaterial,
+    clear,
+    clearIos,
+    clearMaterial,
+    tonal,
+    tonalIos,
+    tonalMaterial,
+    rounded,
+    roundedIos,
+    roundedMaterial,
+    small,
+    smallIos,
+    smallMaterial,
+    large,
+    largeIos,
+    largeMaterial,
+    raised,
+    raisedIos,
+    raisedMaterial,
+    inline = false,
+    segmented = false,
+    segmentedStrong = false,
+    segmentedActive = false,
+    touchRipple = true,
+    onClick,
+    children,
+    ...restProps
+  }: {
+    class?: string;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string | Component;
+    href?: string;
+    disabled?: boolean;
+    outline?: boolean;
+    outlineIos?: boolean;
+    outlineMaterial?: boolean;
+    clear?: boolean;
+    clearIos?: boolean;
+    clearMaterial?: boolean;
+    tonal?: boolean;
+    tonalIos?: boolean;
+    tonalMaterial?: boolean;
+    rounded?: boolean;
+    roundedIos?: boolean;
+    roundedMaterial?: boolean;
+    small?: boolean;
+    smallIos?: boolean;
+    smallMaterial?: boolean;
+    large?: boolean;
+    largeIos?: boolean;
+    largeMaterial?: boolean;
+    raised?: boolean;
+    raisedIos?: boolean;
+    raisedMaterial?: boolean;
+    inline?: boolean;
+    segmented?: boolean;
+    segmentedStrong?: boolean;
+    segmentedActive?: boolean;
+    touchRipple?: boolean;
+    onClick?: () => void;
+    children?: Snippet;
+  } = $props();
 
   // Anchor props
-  export let href = undefined;
-
-  export let disabled = false;
 
   // Style props
-  export let outline = undefined;
-  export let outlineIos = undefined;
-  export let outlineMaterial = undefined;
-  export let clear = undefined;
-  export let clearIos = undefined;
-  export let clearMaterial = undefined;
-  export let tonal = undefined;
-  export let tonalIos = undefined;
-  export let tonalMaterial = undefined;
-  export let rounded = undefined;
-  export let roundedIos = undefined;
-  export let roundedMaterial = undefined;
-  export let small = undefined;
-  export let smallIos = undefined;
-  export let smallMaterial = undefined;
-  export let large = undefined;
-  export let largeIos = undefined;
-  export let largeMaterial = undefined;
-  export let raised = undefined;
-  export let raisedIos = undefined;
-  export let raisedMaterial = undefined;
-
-  export let inline = false;
 
   // Segmented
-  export let segmented = false;
-  export let segmentedStrong = false;
-  export let segmentedActive = false;
 
-  export let touchRipple = true;
+  let theme = $derived(useTheme({}, (v) => (theme = v)));
 
-  export let onClick = undefined;
+  let rippleEl = $state({ current: null });
 
-  let theme;
-  theme = useTheme({}, (v) => (theme = v));
-
-  const rippleEl = { current: null };
-
-  $: attrs = {
+  let attrs = $derived({
     href,
-    ...$$restProps,
-  };
+    ...restProps,
+  });
 
   const dark = useDarkClasses();
 
-  $: useTouchRipple(rippleEl, touchRipple);
+  $effect(() => useTouchRipple(rippleEl, touchRipple));
 
-  $: isOutline =
+  let isOutline = $derived(
     typeof outline === 'undefined'
       ? theme === 'ios'
         ? outlineIos
         : outlineMaterial
-      : outline;
-  $: isClear =
+      : outline
+  );
+  let isClear = $derived(
     typeof clear === 'undefined'
       ? theme === 'ios'
         ? clearIos
         : clearMaterial
-      : clear;
-  $: isTonal =
+      : clear
+  );
+  let isTonal = $derived(
     typeof tonal === 'undefined'
       ? theme === 'ios'
         ? tonalIos
         : tonalMaterial
-      : tonal;
-  $: isRounded =
+      : tonal
+  );
+  let isRounded = $derived(
     typeof rounded === 'undefined'
       ? theme === 'ios'
         ? roundedIos
         : roundedMaterial
-      : rounded;
-  $: isSmall =
+      : rounded
+  );
+  let isSmall = $derived(
     typeof small === 'undefined'
       ? theme === 'ios'
         ? smallIos
         : smallMaterial
-      : small;
-  $: isLarge =
+      : small
+  );
+  let isLarge = $derived(
     typeof large === 'undefined'
       ? theme === 'ios'
         ? largeIos
         : largeMaterial
-      : large;
-  $: isRaised =
+      : large
+  );
+  let isRaised = $derived(
     typeof raised === 'undefined'
       ? theme === 'ios'
         ? raisedIos
         : raisedMaterial
-      : raised;
+      : raised
+  );
 
-  $: size = isLarge ? 'large' : isSmall ? 'small' : 'medium';
+  let size = $derived(isLarge ? 'large' : isSmall ? 'small' : 'medium');
 
   const getStyle = (
-    isOutline,
-    isClear,
-    isTonal,
-    segmented,
-    segmentedActive,
-    segmentedStrong
+    isOutline: boolean,
+    isClear: boolean,
+    isTonal: boolean,
+    segmented: boolean,
+    segmentedActive: boolean,
+    segmentedStrong: boolean
   ) => {
     let s = isOutline
       ? 'outline'
       : isClear || (segmented && !segmentedActive)
-      ? 'clear'
-      : isTonal
-      ? 'tonal'
-      : 'fill';
+        ? 'clear'
+        : isTonal
+          ? 'tonal'
+          : 'fill';
     if (segmentedStrong) s = 'segmentedStrong';
     if (segmentedStrong && segmentedActive) s = 'segmentedStrongActive';
     return s;
   };
 
-  $: style = getStyle(
-    isOutline,
-    isClear,
-    isTonal,
-    segmented,
-    segmentedActive,
-    segmentedStrong
+  let style = $derived(
+    getStyle(
+      isOutline,
+      isClear,
+      isTonal,
+      segmented,
+      segmentedActive,
+      segmentedStrong
+    )
   );
 
-  $: colors = ButtonColors(colorsProp, dark);
+  let colors = $derived(ButtonColors(colorsProp, dark));
 
-  $: c = useThemeClasses(
-    { ios, material },
-    ButtonClasses(
-      {
-        inline,
-        segmented,
-        segmentedStrong,
-        segmentedActive,
-        disabled,
-        outline: isOutline,
-        clear: isClear,
-        tonal: isTonal,
-        rounded: isRounded,
-        small: isSmall,
-        large: isLarge,
-        raised: isRaised,
-      },
-      colors,
-      className,
-      dark
-    ),
-    '',
-    (v) => (c = v)
+  let c = $derived(
+    useThemeClasses(
+      { ios, material },
+      ButtonClasses(
+        {
+          inline,
+          segmented,
+          segmentedStrong,
+          segmentedActive,
+          disabled,
+          outline: isOutline,
+          clear: isClear,
+          tonal: isTonal,
+          rounded: isRounded,
+          small: isSmall,
+          large: isLarge,
+          raised: isRaised,
+        },
+        colors,
+        className,
+        dark
+      ),
+      (v) => (c = v),
+      ''
+    )
   );
 
-  $: classes = cls(
-    c.base[isRounded ? 'rounded' : 'square'],
+  let classes = $derived(
+    cls(
+      c.base[isRounded ? 'rounded' : 'square'],
 
-    // style
-    c.style[style],
+      // style
+      c.style[style],
 
-    // size
-    c.size[size],
+      // size
+      c.size[size],
 
-    isRaised && c.raised,
+      isRaised && c.raised,
 
-    className
+      className
+    )
   );
-
-  const Component = component === 'button' && href ? 'a' : component;
 </script>
 
-{#if typeof component === 'string'}
+{#if typeof Component === 'string'}
   <svelte:element
-    this={Component}
-    bind:this={rippleEl.current}
-    class={classes}
+    this="{Component}"
+    bind:this="{rippleEl.current}"
+    class="{classes}"
     {disabled}
     {...attrs}
     role="button"
     tabindex="0"
-    on:click={onClick}
+    onclick="{onClick}"
   >
-    <slot />
+    {@render children()}
   </svelte:element>
 {:else}
-  <svelte:component
-    this={component}
-    bind:this={rippleEl.current}
-    class={classes}
+  <Component
+    this="{Component}"
+    bind:this="{rippleEl.current}"
+    class="{classes}"
     {disabled}
     {...attrs}
-    on:click={onClick}
+    onclick="{onClick}"
   >
-    <slot />
-  </svelte:component>
+    {@render children()}
+  </Component>
 {/if}
