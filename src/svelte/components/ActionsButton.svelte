@@ -77,7 +77,7 @@
       : bold
   );
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ActionsButtonClasses(

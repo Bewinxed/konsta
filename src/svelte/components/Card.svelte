@@ -9,7 +9,7 @@
   import { printText } from '../shared/print-text.js';
 
   let {
-    component: Component = 'div',
+    component: ElComponent = 'div',
     class: className,
     colors: colorsProp,
     ios,
@@ -28,6 +28,8 @@
     headerDivider = false,
     footerDivider = false,
     children,
+    headerSlot,
+    footerSlot,
     ...restProps
   }: {
     component?: string | Component;
@@ -49,6 +51,8 @@
     headerDivider?: boolean;
     footerDivider?: boolean;
     children?: Snippet;
+    headerSlot?: Snippet;
+    footerSlot?: Snippet;
   } = $props();
 
   const dark = useDarkClasses();
@@ -76,7 +80,7 @@
 
   let colors = $derived(CardColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       CardClasses(
@@ -94,32 +98,32 @@
   );
 </script>
 
-{#if typeof Component === 'string'}
-  <svelte:element this="{Component}" class="{c.base[style]}" {...restProps}>
-    {#if header || $$slots.header}
-      <div class="{c.header}">{printText(header)}<slot name="header" /></div>
+{#if typeof ElComponent === 'string'}
+  <svelte:element this="{ElComponent}" class="{c.base[style]}" {...restProps}>
+    {#if header || headerSlot}
+      <div class="{c.header}">{printText(header)}{@render headerSlot()}</div>
     {/if}
     {#if contentWrap}
       <div class="{c.content}">{@render children()}</div>
     {:else}
       {@render children()}
     {/if}
-    {#if footer || $$slots.footer}
-      <div class="{c.footer}">{printText(footer)}<slot name="footer" /></div>
+    {#if footer || footerSlot}
+      <div class="{c.footer}">{printText(footer)}{@render footerSlot()}</div>
     {/if}
   </svelte:element>
 {:else}
-  <Component this="{Component}" class="{c.base[style]}" {...restProps}>
-    {#if header || $$slots.header}
-      <div class="{c.header}">{printText(header)}<slot name="header" /></div>
+  <ElComponent this="{ElComponent}" class="{c.base[style]}" {...restProps}>
+    {#if header || headerSlot}
+      <div class="{c.header}">{printText(header)}{@render headerSlot()}</div>
     {/if}
     {#if contentWrap}
       <div class="{c.content}">{@render children()}</div>
     {:else}
       {@render children()}
     {/if}
-    {#if footer || $$slots.footer}
-      <div class="{c.footer}">{printText(footer)}<slot name="footer" /></div>
+    {#if footer || footerSlot}
+      <div class="{c.footer}">{printText(footer)}{@render footerSlot()}</div>
     {/if}
-  </Component>
+  </ElComponent>
 {/if}

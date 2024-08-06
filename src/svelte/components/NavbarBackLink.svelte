@@ -29,13 +29,13 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   let shouldShowText = $derived(
     (showText === 'auto' && theme === 'ios') || showText === true
   );
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       NavbarBackLinkClasses(),

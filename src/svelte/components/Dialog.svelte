@@ -47,7 +47,7 @@
 
   let colors = $derived(DialogColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       DialogClasses(

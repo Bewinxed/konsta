@@ -84,7 +84,7 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   let isRounded = $derived(rounded || roundedIos || roundedMaterial);
   let isSmall = $derived(small || smallIos || smallMaterial);
@@ -108,7 +108,7 @@
   );
   let shape = $derived(isRounded ? 'rounded' : 'square');
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       StepperClasses({ buttonsOnly }, colors),

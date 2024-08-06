@@ -19,7 +19,7 @@
 
   let rippleEl = $state({ current: null });
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       TableBodyClasses({}),

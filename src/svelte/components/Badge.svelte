@@ -30,7 +30,7 @@
 
   let size = $derived(small ? 'sm' : 'md');
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       BadgeClasses({ small }, colors),

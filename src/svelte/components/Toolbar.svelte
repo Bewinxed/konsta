@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Snippet } from 'svelte';
 
-  import { onMount, afterUpdate } from 'svelte';
+  import { onMount,  } from 'svelte';
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
@@ -41,7 +41,7 @@
 
   let highlightElRef = $state<HTMLElement>();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   let highlightStyle = $state({
     transform: '',
@@ -82,7 +82,7 @@
 
   let colors = $derived(ToolbarColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ToolbarClasses(

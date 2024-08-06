@@ -31,24 +31,21 @@
     ...restProps
   }: {
     class?: string;
-    colors?: any;
-    ios?: any;
-    material?: any;
-    component?: any;
-    id?: any;
-    name?: any;
-    placeholder?: any;
-    value?: any;
-    outline?: any;
-    leftClass?: any;
-    rightClass?: any;
-    style?: any;
-    textareaId?: any;
-    disabled?: any;
-    size?: any;
-    onInput?: any;
-    onChange?: any;
-    onFocus?: any;
+    colors?: string;
+    ios?: boolean;
+    material?: boolean;
+    component?: string;
+    id?: string;
+    name?: string;
+    placeholder?: string;
+    value?: string;
+    outline?: boolean;
+    leftClass?: string;
+    rightClass?: string;
+    style?: string;
+    textareaId?: string;
+    disabled?: boolean;
+    size?: string;
     children?: Snippet;
   } = $props();
 
@@ -58,25 +55,27 @@
 
   const dark = useDarkClasses();
 
-  let colors = $derived(MessagebarColors(colorsProp, dark);
+  let colors = $derived(MessagebarColors(colorsProp, dark))
 
   const onFocusInternal = (e) => {
     isFocused = true;
     if (onFocus) onFocus(e);
   };
 
-  $: c = useThemeClasses(
-    { ios, material },
-    MessagebarClasses(
-      {
-        leftClass,
-        rightClass,
-      },
-      colors,
-      { isFocused }
-    ),
-    className,
-    (v) => (c = v)
+  let c = $state(
+    useThemeClasses(
+      { ios, material },
+      MessagebarClasses(
+        {
+          leftClass,
+          rightClass,
+        },
+        colors,
+        { isFocused }
+      ),
+      className,
+      (v) => (c = v)
+    )
   );
 </script>
 

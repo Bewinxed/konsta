@@ -42,7 +42,7 @@
 
   let rippleEl = $state({ current: null });
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
@@ -52,7 +52,7 @@
 
   let _state = $derived(checked ? 'checked' : 'notChecked');
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       RadioClasses({}, colors, className, dark),

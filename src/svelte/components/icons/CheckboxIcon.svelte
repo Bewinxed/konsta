@@ -18,7 +18,7 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 </script>
 
 {#if theme === 'ios'}

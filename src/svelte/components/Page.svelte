@@ -27,7 +27,7 @@
 
   let colors = $derived(PageColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       PageClasses({}, colors, className),

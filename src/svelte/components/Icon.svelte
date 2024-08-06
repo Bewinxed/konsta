@@ -28,9 +28,9 @@
     materialSlot?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({}, (v) => (theme = v)));
+  let theme = $state(useTheme({}, (v) => (theme = v)));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses({}, IconClasses({}, className), (v) => (c = v), className)
   );
 </script>

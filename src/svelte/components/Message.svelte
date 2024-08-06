@@ -65,7 +65,7 @@
 
   let colors = $derived(MessageColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       MessageClasses({ type }, colors),

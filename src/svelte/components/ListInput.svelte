@@ -11,7 +11,6 @@
   import { ListInputColors } from '../../shared/colors/ListInputColors.js';
   import { cls } from '../../shared/cls.js';
   import { printText } from '../shared/print-text.js';
-  import { Booleanish } from 'svelte/elements.js';
 
   let {
     class: className,
@@ -100,7 +99,7 @@
     autocomplete?: string;
     autocorrect?: string;
     autocapitalize?: string;
-    spellcheck?: Booleanish;
+    spellcheck?: any;
     autofocus?: boolean;
     autosave?: string;
     max?: string;
@@ -128,17 +127,19 @@
 
   // input props
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
+
   theme = useTheme({ ios, material }, (v) => (theme = v));
 
-  $: isOutline =
+  let isOutline = $derived(
     typeof outline === 'undefined'
       ? theme === 'ios'
         ? outlineIos
         : outlineMaterial
-      : outline;
+      : outline
+  );
 
-  let inputEl = $state(null);
+  let inputEl = $state<HTMLElement>(null);
 
   let isFocused = $state(false);
 
@@ -191,7 +192,7 @@
     if (onBlur) onBlur(e);
   };
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ListInputClasses(

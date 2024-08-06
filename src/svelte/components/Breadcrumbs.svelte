@@ -21,7 +21,7 @@
     children?: Snippet;
   } = $props();
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       BreadcrumbsClasses({ fontSizeIos, fontSizeMaterial }),

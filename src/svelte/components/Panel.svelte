@@ -40,7 +40,7 @@
 
   let colors = $derived(PanelColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       PanelClasses({ size, floating }, colors, className),

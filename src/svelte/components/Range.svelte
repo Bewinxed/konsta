@@ -50,7 +50,7 @@
 
   let colors = $derived(RangeColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       RangeClasses({}, colors, dark),

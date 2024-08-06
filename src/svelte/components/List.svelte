@@ -98,7 +98,7 @@
 
   let colors = $derived(ListColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ListClasses(

@@ -117,7 +117,7 @@
 
   // Link props
 
-  let ListDividersContext = $derived<any>(
+  let ListDividersContext = $state<any>(
     getReactiveContext('ListDividersContext', (value) => {
       ListDividersContext = value || {};
     }) || { value: false }
@@ -125,7 +125,7 @@
 
   let rippleEl = $state({ current: null });
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
@@ -189,7 +189,7 @@
       (subtitle || text || subtitleSlot || textSlot)
   );
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ListItemClasses(

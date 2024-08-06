@@ -65,20 +65,23 @@
     popoverPosition: 'top-left',
   };
 
-  $: state = opened ? 'opened' : 'closed';
+  let _state = $derived(opened ? 'opened' : 'closed');
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $_state(useTheme({ ios, material }, (v) => (theme = v)));
+
 
   const dark = useDarkClasses();
 
-  let colors = $derived(PopoverColors(colorsProp, dark);
+  let colors = $derived(PopoverColors(colorsProp, dark))
 
-  $: c = useThemeClasses(
-    { ios, material },
-    PopoverClasses({ size, angleClass, translucent }, colors, className),
-    className,
-    (v) => (c = v)
-  );
+  let c = $_state(
+    useThemeClasses(
+      { ios, material },
+      PopoverClasses({ size, angleClass, translucent }, colors, className),
+      className,
+      (v) => (c = v)
+    )
+)
 
   const setPopover = () => {
     if (!target || !el || !opened) return;
@@ -116,22 +119,22 @@
     setPopover();
   }
 
-  $: watchOpened(opened);
+  $effect(() => watchOpened(opened));
 
-  $: popoverStyle = positions.set
+  let popoverStyle = $derived(positions.set
     ? `
         ${style || ''};
         left: ${positions.popoverLeft};
         top: ${positions.popoverTop};
       `
-    : style || '';
+    : style || '');
 
-  $: angleStyle = positions.set
+  let angleStyle = $derived(positions.set
     ? `
         left: ${positions.angleLeft};
         top: ${positions.angleTop};
       `
-    : undefined;
+    : undefined);
 
   const originClasses = {
     'top-right': 'origin-bottom-left',
@@ -141,14 +144,14 @@
     'bottom-right': 'origin-top-left',
     'bottom-left': 'origin-top-right',
   };
-  $: classes = cls(
-    c.base[state],
+  let classes = $derived(cls(
+    c.base[_state],
     theme === 'material' && originClasses[positions.popoverPosition]
-  );
+  ));
 </script>
 
 {#if backdrop}
-  <div class="{c.backdrop[state]}" onclick="{onBackdropClick}"></div>
+  <div class="{c.backdrop[_state]}" onclick="{onBackdropClick}"></div>
 {/if}
 <div bind:this="{el}" class="{classes}" style="{popoverStyle}" {...restProps}>
   {#if angle}

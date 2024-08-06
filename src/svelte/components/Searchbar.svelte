@@ -58,11 +58,12 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   let searchEl = $state<HTMLElement>();
   let rippleEl = $state({ current: null });
-  $: useTouchRipple(rippleEl, touchRipple);
+
+  $effect(() => useTouchRipple(rippleEl, touchRipple));
 
   let isEnabled = $state(false);
   let disableButtonRef = $state<HTMLElement>();
@@ -124,7 +125,7 @@
     });
   });
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       SearchbarClasses({}, colors, {

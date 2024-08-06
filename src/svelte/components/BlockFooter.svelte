@@ -28,7 +28,7 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({}, (v) => (theme = v)));
+  let theme = $state(useTheme({}, (v) => (theme = v)));
 
   const dark = useDarkClasses();
 
@@ -42,7 +42,7 @@
 
   let colors = $derived(BlockFooterColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       BlockFooterClasses({ inset: isInset }, colors),

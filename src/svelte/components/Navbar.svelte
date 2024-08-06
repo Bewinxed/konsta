@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Snippet } from 'svelte';
 
-  import { onMount, onDestroy, afterUpdate } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { useTheme } from '../shared/use-theme.js';
   import { useThemeClasses } from '../shared/use-theme-classes.js';
   import { useDarkClasses } from '../shared/use-dark-classes.js';
@@ -95,7 +95,7 @@
 
   const dark = useDarkClasses();
 
-  let theme = $derived(useTheme((v) => (theme = v)));
+  let theme = $state(useTheme((v) => (theme = v)));
 
   let colors = $derived(NavbarColors(colorsProp, dark));
 
@@ -103,7 +103,7 @@
     typeof outline === 'undefined' ? theme === 'ios' : outline
   );
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       NavbarClasses(

@@ -53,7 +53,7 @@
 
   let _state = $derived(checked || indeterminate ? 'checked' : 'notChecked');
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       CheckboxClasses({}, colors, className, dark),

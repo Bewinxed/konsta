@@ -31,7 +31,7 @@
 
   let colors = $derived(BlockTitleColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       BlockTitleClasses({ withBlock, medium, large }, colors),

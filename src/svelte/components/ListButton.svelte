@@ -50,7 +50,7 @@
 
   let rippleEl = $state({ current: null });
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   $effect(() => useTouchRipple(rippleEl, touchRipple));
 
@@ -58,7 +58,7 @@
 
   let colors = $derived(ListButtonColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ListButtonClasses(

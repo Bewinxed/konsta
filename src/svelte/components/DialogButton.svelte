@@ -14,7 +14,7 @@
     colors: colorsProp,
     ios,
     material,
-    component: Component = 'button',
+    component: ElComponent = 'button',
     disabled = false,
     strong,
     strongIos,
@@ -36,7 +36,7 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({}, (v) => (theme = v)));
+  let theme = $state(useTheme({}, (v) => (theme = v)));
 
   let isStrong = $derived(
     typeof strong === 'undefined'
@@ -54,7 +54,7 @@
 
   let colors = $derived(DialogButtonColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       DialogButtonClasses({ disabled, strong: isStrong }, colors),
@@ -65,9 +65,9 @@
 </script>
 
 {#if theme === 'ios'}
-  {#if typeof Component === 'string'}
+  {#if typeof ElComponent === 'string'}
     <svelte:element
-      this="{Component}"
+      this="{ElComponent}"
       class="{c.base}"
       {disabled}
       {...attrs}
@@ -78,19 +78,19 @@
       {@render children()}
     </svelte:element>
   {:else}
-    <Component
-      this="{Component}"
+    <ElComponent
+      this="{ElComponent}"
       class="{c.base}"
       {disabled}
       {...attrs}
       onclick="{onClick}"
     >
       {@render children()}
-    </Component>
+    </ElComponent>
   {/if}
 {:else}
   <Button
-    component="{Component}"
+    component="{ElComponent}"
     inline
     rounded
     {disabled}

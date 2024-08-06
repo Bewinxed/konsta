@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Snippet } from 'svelte';
 
-  import { onMount, afterUpdate } from 'svelte';
+  import { onMount,  } from 'svelte';
   import { cls } from '../../shared/cls.js';
   import { SegmentedClasses } from '../../shared/classes/SegmentedClasses.js';
   import { SegmentedColors } from '../../shared/colors/SegmentedColors.js';
@@ -39,7 +39,7 @@
 
   let colors = $derived(SegmentedColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       SegmentedClasses({ outline, rounded }, colors, dark),
@@ -53,7 +53,7 @@
     width: '',
   });
 
-  $: classes = cls(
+  let classes = $derived(cls(
     // base
     rounded ? c.base.rounded : c.base.square,
     raised && c.raised,
@@ -61,7 +61,7 @@
     strong && c.strong,
 
     className
-  );
+  ));
 
   const setHighlight = () => {
     if (strong && highlightElRef) {

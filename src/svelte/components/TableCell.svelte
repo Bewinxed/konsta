@@ -28,7 +28,7 @@
   const dark = useDarkClasses();
   let colors = $derived(TableCellColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       TableCellClasses({ header }, colors),

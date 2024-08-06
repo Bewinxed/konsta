@@ -13,7 +13,7 @@
     colors: colorsProp,
     ios,
     material,
-    component: Component = 'a',
+    component: ElComponent = 'a',
     href,
     text,
     textPosition = 'after',
@@ -47,7 +47,7 @@
 
   let colors = $derived(FabColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       FabClasses({}, colors),
@@ -57,9 +57,9 @@
   );
 </script>
 
-{#if typeof Component === 'string'}
+{#if typeof ElComponent === 'string'}
   <svelte:element
-    this="{Component}"
+    this="{ElComponent}"
     class="{text ? c.base.withText : c.base.iconOnly}"
     {href}
     bind:this="{rippleEl.current}"
@@ -88,22 +88,22 @@
     {@render children()}
   </svelte:element>
 {:else}
-  <Component
+  <ElComponent
     class="{text ? c.base.withText : c.base.iconOnly}"
     {href}
     bind:this="{rippleEl.current}"
     onclick="{onClick}"
     {...restProps}
   >
-    {#if (text || $$slots.text) && textPosition === 'before'}
-      <span class="{c.text}">{printText(text)}<slot name="text" /></span>
+    {#if (text || textSlot) && textPosition === 'before'}
+      <span class="{c.text}">{printText(text)}{@render textSlot()}</span>
     {/if}
-    {#if $$slots.icon}
-      <span class="{c.icon}"><slot name="icon" /></span>
+    {#if iconSlot}
+      <span class="{c.icon}">{@render iconSlot()}</span>
     {/if}
-    {#if (text || $$slots.text) && textPosition === 'after'}
-      <span class="{c.text}">{printText(text)}<slot name="text" /></span>
+    {#if (text || textSlot) && textPosition === 'after'}
+      <span class="{c.text}">{printText(text)}{@render textSlot()}</span>
     {/if}
     {@render children()}
-  </Component>
+  </ElComponent>
 {/if}

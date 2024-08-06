@@ -27,12 +27,12 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $derived(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
 
   const dark = useDarkClasses();
   let colors = $derived(PreloaderColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       PreloaderClasses({ size }, colors, theme),

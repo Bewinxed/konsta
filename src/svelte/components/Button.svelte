@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Component, Snippet } from 'svelte';
+  import { type Component, Snippet } from 'svelte';
 
   import { cls } from '../../shared/cls.js';
   import { useTouchRipple } from '../shared/use-touch-ripple.svelte.js';
@@ -15,7 +15,7 @@
     colors: colorsProp,
     ios,
     material,
-    component: Component = 'button',
+    component: ElComponent = 'button',
     href,
     disabled = false,
     outline,
@@ -91,7 +91,7 @@
 
   // Segmented
 
-  let theme = $derived(useTheme({}, (v) => (theme = v)));
+  let theme = $state(useTheme({}, (v) => (theme = v)));
 
   let rippleEl = $state({ current: null });
 
@@ -189,7 +189,7 @@
 
   let colors = $derived(ButtonColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ButtonClasses(
@@ -233,9 +233,9 @@
   );
 </script>
 
-{#if typeof Component === 'string'}
+{#if typeof ElComponent === 'string'}
   <svelte:element
-    this="{Component}"
+    this="{ElComponent}"
     bind:this="{rippleEl.current}"
     class="{classes}"
     {disabled}
@@ -247,8 +247,8 @@
     {@render children()}
   </svelte:element>
 {:else}
-  <Component
-    this="{Component}"
+  <ElComponent
+    this="{ElComponent}"
     bind:this="{rippleEl.current}"
     class="{classes}"
     {disabled}
@@ -256,5 +256,5 @@
     onclick="{onClick}"
   >
     {@render children()}
-  </Component>
+  </ElComponent>
 {/if}

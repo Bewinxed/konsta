@@ -44,7 +44,7 @@
     typeof dividers === 'undefined' ? theme === 'ios' : dividers
   );
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ActionsLabelClasses(

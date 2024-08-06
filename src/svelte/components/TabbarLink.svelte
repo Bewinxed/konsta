@@ -41,7 +41,7 @@
   let hasIcon = $derived(iconSlot);
   let hasLabel = $derived(label || labelSlot || children);
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       TabbarLinkClasses({ hasLabel, hasIcon, active }, colors),

@@ -19,6 +19,7 @@
     outline = false,
     onClick,
     children,
+    mediaSlot,
     ...restProps
   }: {
     class?: string;
@@ -30,24 +31,25 @@
     outline?: boolean;
     onClick?: () => void;
     children?: Snippet;
+    mediaSlot?: Snippet;
   } = $props();
 
   const dark = useDarkClasses();
 
-  let theme = $derived(useTheme({}, (v) => (theme = v)));
+  let theme = $state(useTheme({}, (v) => (theme = v)));
 
   let style = $derived(outline ? 'outline' : 'fill');
 
   let colors = $derived(ChipColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses({ ios, material }, ChipClasses({}, colors), (v) => (c = v))
   );
 </script>
 
 <div class="{c.base[style]}" {...restProps} onclick="{onClick}">
-  {#if $$slots.media}
-    <div class="{c.media}"><slot name="media" /></div>
+  {#if mediaSlot}
+    <div class="{c.media}">{@render mediaSlot()}</div>
   {/if}
   {@render children()}
   {#if deleteButton}

@@ -1,4 +1,5 @@
-import { SvelteComponent } from 'svelte';
+import { Component } from 'svelte';
+import { Snippet } from 'svelte';
 // IMPORT_COMPONENTS
 
 // PROVIDER
@@ -21,8 +22,13 @@ interface KonstaProviderProps {
    * @default true
    */
   touchRipple?: boolean;
+
+  /**
+   * Children, can be any content
+   */
+  children?: Snippet;
 }
-declare class KonstaProvider extends SvelteComponent<
+declare class KonstaProvider extends Component<
   KonstaProviderProps,
   {},
   { default: {} }

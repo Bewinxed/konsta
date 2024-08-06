@@ -15,6 +15,7 @@
     position = 'left',
     opened = false,
     children,
+    buttonSlot,
     ...restProps
   }: {
     class?: string;
@@ -24,6 +25,7 @@
     translucent?: boolean;
     position?: string;
     opened?: boolean;
+      buttonSlot?: Snippet;
     children?: Snippet;
   } = $props();
 
@@ -31,7 +33,7 @@
 
   let colors = $derived(ToastColors(colorsProp, dark));
 
-  let c = $derived(
+  let c = $state(
     useThemeClasses(
       { ios, material },
       ToastClasses({ opened, translucent }, colors, className),
@@ -44,8 +46,8 @@
 <div class="{c.base[position]}" {...restProps}>
   <div class="{c.content}">
     {@render children()}
-    {#if $$slots.button}
-      <div class="{c.button}"><slot name="button" /></div>
+    {#if buttonSlot}
+      <div class="{c.button}">{@render buttonSlot()}</div>
     {/if}
   </div>
 </div>
