@@ -50,13 +50,12 @@
 
   let colors = $derived(RangeColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      RangeClasses({}, colors, dark),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    RangeClasses({}, colors, dark),
+    (v) => (c = v),
+    className
   );
 
   let valueWidth = $derived((((value || 0) - min) / (max - min)) * 100);

@@ -62,20 +62,19 @@
     if (onFocus) onFocus(e);
   };
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      MessagebarClasses(
-        {
-          leftClass,
-          rightClass,
-        },
-        colors,
-        { isFocused }
-      ),
-      className,
-      (v) => (c = v)
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    MessagebarClasses(
+      {
+        leftClass,
+        rightClass,
+      },
+      colors,
+      { isFocused }
+    ),
+    className,
+    (v) => (c = v)
   );
 </script>
 

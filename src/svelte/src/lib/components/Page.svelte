@@ -27,13 +27,12 @@
 
   let colors = $derived(PageColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      PageClasses({}, colors, className),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    PageClasses({}, colors, className),
+    (v) => (c = v),
+    className
   );
 </script>
 

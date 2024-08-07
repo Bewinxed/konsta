@@ -10,6 +10,10 @@
   import { useDarkClasses } from '$shared/use-dark-classes.js';
   import { ButtonClasses } from '$konsta/classes/ButtonClasses.js';
   import { ButtonColors } from '$konsta/colors/ButtonColors.js';
+  import type {
+    HTMLButtonAttributes,
+    MouseEventHandler,
+  } from 'svelte/elements';
 
   let {
     class: className,
@@ -45,7 +49,8 @@
     segmentedStrong = false,
     segmentedActive = false,
     touchRipple = true,
-    onClick,
+    onclick: OnClick,
+    onclick,
     children,
     ...restProps
   }: {
@@ -82,9 +87,9 @@
     segmentedStrong?: boolean;
     segmentedActive?: boolean;
     touchRipple?: boolean;
-    onClick?: () => void;
-    children?: Snippet;
-  } = $props();
+    onclick?: ((() => void) & MouseEventHandler<HTMLButtonElement>) | undefined;
+    children: Snippet;
+  } & HTMLButtonAttributes = $props();
 
   // Anchor props
 
@@ -92,7 +97,9 @@
 
   // Segmented
 
-  let theme = $state(useTheme({}, (v) => (theme = v)));
+  let theme = $state('');
+
+  theme = useTheme({}, (v) => (theme = v));
 
   let rippleEl = $state({ current: null });
 
@@ -190,31 +197,30 @@
 
   let colors = $derived(ButtonColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ButtonClasses(
-        {
-          inline,
-          segmented,
-          segmentedStrong,
-          segmentedActive,
-          disabled,
-          outline: isOutline,
-          clear: isClear,
-          tonal: isTonal,
-          rounded: isRounded,
-          small: isSmall,
-          large: isLarge,
-          raised: isRaised,
-        },
-        colors,
-        className,
-        dark
-      ),
-      (v) => (c = v),
-      ''
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ButtonClasses(
+      {
+        inline,
+        segmented,
+        segmentedStrong,
+        segmentedActive,
+        disabled,
+        outline: isOutline,
+        clear: isClear,
+        tonal: isTonal,
+        rounded: isRounded,
+        small: isSmall,
+        large: isLarge,
+        raised: isRaised,
+      },
+      colors,
+      className,
+      dark
+    ),
+    (v) => (c = v),
+    ''
   );
 
   let classes = $derived(
@@ -243,7 +249,7 @@
     {...attrs}
     role="button"
     tabindex="0"
-    onclick="{onClick}"
+    {onclick}
   >
     {@render children()}
   </svelte:element>
@@ -254,7 +260,7 @@
     class="{classes}"
     {disabled}
     {...attrs}
-    onclick="{onClick}"
+    {onclick}
   >
     {@render children()}
   </ElComponent>

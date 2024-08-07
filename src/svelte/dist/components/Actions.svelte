@@ -11,8 +11,12 @@ let {
   ...restProps
 } = $props();
 let _state = $derived(opened ? "opened" : "closed");
-let c = $state(
-  useThemeClasses({ ios, material }, ActionsClasses({}), void 0, className)
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ActionsClasses({}),
+  void 0,
+  className
 );
 </script>
 

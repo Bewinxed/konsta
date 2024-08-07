@@ -28,7 +28,8 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $state(useTheme({}, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({}, (v) => (theme = v));
 
   const dark = useDarkClasses();
 
@@ -42,13 +43,12 @@
 
   let colors = $derived(BlockHeaderColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      BlockHeaderClasses({ inset: isInset }, colors),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    BlockHeaderClasses({ inset: isInset }, colors),
+    (v) => (c = v),
+    className
   );
 </script>
 

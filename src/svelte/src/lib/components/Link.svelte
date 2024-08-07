@@ -46,7 +46,8 @@
 
   let rippleEl = $state({ current: null });
 
-  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({ ios, material }, (v) => (theme = v));
 
   const dark = useDarkClasses();
 
@@ -76,14 +77,13 @@
 
   let tabbarState = $derived(tabbarActive ? 'active' : 'inactive');
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      LinkClasses({ iconOnly }, { textColor, needsTouchRipple }, className),
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    LinkClasses({ iconOnly }, { textColor, needsTouchRipple }, className),
 
-      (v) => (c = v),
-      ''
-    )
+    (v) => (c = v),
+    ''
   );
 
   let classes = $derived(

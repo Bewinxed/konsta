@@ -29,19 +29,19 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({ ios, material }, (v) => (theme = v));
 
   let shouldShowText = $derived(
     (showText === 'auto' && theme === 'ios') || showText === true
   );
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      NavbarBackLinkClasses(),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    NavbarBackLinkClasses(),
+    (v) => (c = v),
+    className
   );
 </script>
 

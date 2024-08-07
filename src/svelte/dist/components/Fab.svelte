@@ -24,13 +24,12 @@ let rippleEl = $state({ current: null });
 const dark = useDarkClasses();
 $effect(() => useTouchRipple(rippleEl, touchRipple));
 let colors = $derived(FabColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    FabClasses({}, colors),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  FabClasses({}, colors),
+  (v) => c = v,
+  className
 );
 </script>
 

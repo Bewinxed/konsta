@@ -14,16 +14,16 @@ let {
   children,
   ...restProps
 } = $props();
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 const dark = useDarkClasses();
 let colors = $derived(PreloaderColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    PreloaderClasses({ size }, colors, theme),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  PreloaderClasses({ size }, colors, theme),
+  (v) => c = v,
+  className
 );
 </script>
 

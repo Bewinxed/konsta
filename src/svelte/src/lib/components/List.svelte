@@ -98,23 +98,22 @@
 
   let colors = $derived(ListColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ListClasses(
-        {
-          nested,
-          margin,
-          inset: isInset,
-          outline: isOutline,
-          strong: isStrong,
-        },
-        colors,
-        className
-      ),
-      (v) => (c = v),
-      ''
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ListClasses(
+      {
+        nested,
+        margin,
+        inset: isInset,
+        outline: isOutline,
+        strong: isStrong,
+      },
+      colors,
+      className
+    ),
+    (v) => (c = v),
+    ''
   );
 
   let classes = $derived(

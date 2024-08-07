@@ -40,13 +40,12 @@
 
   let colors = $derived(PanelColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      PanelClasses({ size, floating }, colors, className),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    PanelClasses({ size, floating }, colors, className),
+    (v) => (c = v),
+    className
   );
 
   let classes = $derived(cls(c.base, c[side][_state]));

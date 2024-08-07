@@ -27,13 +27,12 @@
 
   let colors = $derived(ProgressbarColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ProgressbarClasses(colors),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ProgressbarClasses(colors),
+    (v) => (c = v),
+    className
   );
 </script>
 

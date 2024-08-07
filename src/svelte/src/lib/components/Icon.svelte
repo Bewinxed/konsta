@@ -28,10 +28,15 @@
     materialSlot?: Snippet;
   } = $props();
 
-  let theme = $state(useTheme({}, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({}, (v) => (theme = v));
 
-  let c = $state(
-    useThemeClasses({}, IconClasses({}, className), (v) => (c = v), className)
+  let c = $state({});
+  c = useThemeClasses(
+    {},
+    IconClasses({}, className),
+    (v) => (c = v),
+    className
   );
 </script>
 

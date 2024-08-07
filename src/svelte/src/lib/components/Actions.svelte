@@ -25,8 +25,12 @@
 
   let _state = $derived(opened ? 'opened' : 'closed');
 
-  let c = $state(
-    useThemeClasses({ ios, material }, ActionsClasses({}), undefined, className)
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ActionsClasses({}),
+    undefined,
+    className
   );
 </script>
 

@@ -36,7 +36,8 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $state(useTheme({}, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({}, (v) => (theme = v));
 
   let isStrong = $derived(
     typeof strong === 'undefined'
@@ -54,13 +55,12 @@
 
   let colors = $derived(DialogButtonColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      DialogButtonClasses({ disabled, strong: isStrong }, colors),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    DialogButtonClasses({ disabled, strong: isStrong }, colors),
+    (v) => (c = v),
+    className
   );
 </script>
 

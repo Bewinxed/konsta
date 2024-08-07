@@ -63,7 +63,8 @@ let ListDividersContext = $state(
   }) || { value: false }
 );
 let rippleEl = $state({ current: null });
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 const dark = useDarkClasses();
 let hasChevron = $derived(
   typeof chevron === "undefined" ? theme === "ios" ? chevronIos : chevronMaterial : chevron
@@ -94,37 +95,36 @@ let isMediaItem = $derived(
 let autoStrongTitle = $derived(
   strongTitle === "auto" && (title || titleSlot) && withTitle !== false && (subtitle || text || subtitleSlot || textSlot)
 );
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ListItemClasses(
-      {
-        menuListItem,
-        dividers: typeof dividers === "undefined" ? ListDividersContext.value : dividers,
-        mediaClass,
-        innerClass,
-        contentClass,
-        titleWrapClass,
-        titleFontSizeIos,
-        titleFontSizeMaterial,
-        strongTitle,
-        contacts: contacts === "false" ? "" : contacts
-      },
-      colors,
-      {
-        isMediaItem,
-        theme,
-        textColor,
-        needsTouchRipple,
-        isMenuListItemActive,
-        darkClasses: dark,
-        autoStrongTitle,
-        className
-      }
-    ),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ListItemClasses(
+    {
+      menuListItem,
+      dividers: typeof dividers === "undefined" ? ListDividersContext.value : dividers,
+      mediaClass,
+      innerClass,
+      contentClass,
+      titleWrapClass,
+      titleFontSizeIos,
+      titleFontSizeMaterial,
+      strongTitle,
+      contacts: contacts === "false" ? "" : contacts
+    },
+    colors,
+    {
+      isMediaItem,
+      theme,
+      textColor,
+      needsTouchRipple,
+      isMenuListItemActive,
+      darkClasses: dark,
+      autoStrongTitle,
+      className
+    }
+  ),
+  (v) => c = v,
+  className
 );
 let itemContentClasses = $derived(
   isLink || isLabel ? c.itemContent.link : c.itemContent.default

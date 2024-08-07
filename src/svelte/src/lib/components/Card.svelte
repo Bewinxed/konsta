@@ -7,6 +7,7 @@
   import { useTheme } from '$shared/use-theme.js';
   import { useThemeClasses } from '$shared/use-theme-classes.js';
   import { printText } from '$shared/print-text.js';
+  import type { Snippet } from '../types/svelte.js';
 
   let {
     component: ElComponent = 'div',
@@ -80,21 +81,20 @@
 
   let colors = $derived(CardColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      CardClasses(
-        {
-          margin,
-          contentWrapPadding,
-          headerDivider,
-          footerDivider,
-        },
-        colors
-      ),
-      (v) => (c = v),
-      ''
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    CardClasses(
+      {
+        margin,
+        contentWrapPadding,
+        headerDivider,
+        footerDivider,
+      },
+      colors
+    ),
+    (v) => (c = v),
+    ''
   );
 </script>
 

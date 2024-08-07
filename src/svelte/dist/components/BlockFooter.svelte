@@ -14,19 +14,19 @@ let {
   children,
   ...restProps
 } = $props();
-let theme = $state(useTheme({}, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({}, (v) => theme = v);
 const dark = useDarkClasses();
 let isInset = $derived(
   typeof inset === "undefined" ? theme === "ios" ? insetIos : insetMaterial : inset
 );
 let colors = $derived(BlockFooterColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    BlockFooterClasses({ inset: isInset }, colors),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  BlockFooterClasses({ inset: isInset }, colors),
+  (v) => c = v,
+  className
 );
 </script>
 

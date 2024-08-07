@@ -21,13 +21,12 @@ const dark = useDarkClasses();
 let colors = $derived(TabbarLinkColors(colorsProp, dark));
 let hasIcon = $derived(iconSlot);
 let hasLabel = $derived(label || labelSlot || children);
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    TabbarLinkClasses({ hasLabel, hasIcon, active }, colors),
-    (v) => c = v,
-    ""
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  TabbarLinkClasses({ hasLabel, hasIcon, active }, colors),
+  (v) => c = v,
+  ""
 );
 </script>
 

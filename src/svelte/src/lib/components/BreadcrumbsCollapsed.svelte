@@ -27,13 +27,12 @@
 
   let colors = $derived(BreadcrumbsCollapsedColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      BreadcrumbsCollapsedClasses({}, colors),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    BreadcrumbsCollapsedClasses({}, colors),
+    (v) => (c = v),
+    className
   );
 </script>
 

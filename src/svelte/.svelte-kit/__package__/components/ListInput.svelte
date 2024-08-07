@@ -65,7 +65,7 @@ let {
   contentSlot,
   ...restProps
 } = $props();
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
 theme = useTheme({ ios, material }, (v) => theme = v);
 let isOutline = $derived(
   typeof outline === "undefined" ? theme === "ios" ? outlineIos : outlineMaterial : outline
@@ -107,29 +107,28 @@ const onBlurInternal = (e) => {
   isFocused = false;
   if (onBlur) onBlur(e);
 };
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ListInputClasses(
-      {
-        error,
-        type,
-        inputClass,
-        outline: isOutline
-      },
-      colors,
-      {
-        isFloatingTransformed,
-        isFocused,
-        darkClasses: dark,
-        getLabelColor,
-        inputClass,
-        hasLabel: label || labelSlot
-      }
-    ),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ListInputClasses(
+    {
+      error,
+      type,
+      inputClass,
+      outline: isOutline
+    },
+    colors,
+    {
+      isFloatingTransformed,
+      isFocused,
+      darkClasses: dark,
+      getLabelColor,
+      inputClass,
+      hasLabel: label || labelSlot
+    }
+  ),
+  (v) => c = v,
+  className
 );
 let InputComponent = $derived(
   type === "select" || type === "textarea" ? type : "input"

@@ -124,7 +124,8 @@
 
   let rippleEl = $state({ current: null });
 
-  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({ ios, material }, (v) => (theme = v));
 
   const dark = useDarkClasses();
 
@@ -188,40 +189,39 @@
       (subtitle || text || subtitleSlot || textSlot)
   );
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ListItemClasses(
-        {
-          menuListItem,
-          dividers:
-            typeof dividers === 'undefined'
-              ? ListDividersContext.value
-              : dividers,
-          mediaClass,
-          innerClass,
-          contentClass,
-          titleWrapClass,
-          titleFontSizeIos,
-          titleFontSizeMaterial,
-          strongTitle,
-          contacts: contacts === 'false' ? '' : contacts,
-        },
-        colors,
-        {
-          isMediaItem,
-          theme,
-          textColor,
-          needsTouchRipple,
-          isMenuListItemActive,
-          darkClasses: dark,
-          autoStrongTitle,
-          className,
-        }
-      ),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ListItemClasses(
+      {
+        menuListItem,
+        dividers:
+          typeof dividers === 'undefined'
+            ? ListDividersContext.value
+            : dividers,
+        mediaClass,
+        innerClass,
+        contentClass,
+        titleWrapClass,
+        titleFontSizeIos,
+        titleFontSizeMaterial,
+        strongTitle,
+        contacts: contacts === 'false' ? '' : contacts,
+      },
+      colors,
+      {
+        isMediaItem,
+        theme,
+        textColor,
+        needsTouchRipple,
+        isMenuListItemActive,
+        darkClasses: dark,
+        autoStrongTitle,
+        className,
+      }
+    ),
+    (v) => (c = v),
+    className
   );
 
   let itemContentClasses = $derived(

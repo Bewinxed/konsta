@@ -22,18 +22,18 @@ let {
   ...restProps
 } = $props();
 let rippleEl = $state({ current: null });
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 const dark = useDarkClasses();
 $effect(() => useTouchRipple(rippleEl, touchRipple));
 let colors = $derived(RadioColors(colorsProp, dark));
 let _state = $derived(checked ? "checked" : "notChecked");
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    RadioClasses({}, colors, className, dark),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  RadioClasses({}, colors, className, dark),
+  (v) => c = v,
+  className
 );
 </script>
 

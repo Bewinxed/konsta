@@ -31,13 +31,12 @@
 
   let size = $derived(small ? 'sm' : 'md');
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      BadgeClasses({ small }, colors),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    BadgeClasses({ small }, colors),
+    (v) => (c = v),
+    className
   );
 </script>
 

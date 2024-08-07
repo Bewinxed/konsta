@@ -23,16 +23,15 @@ let colors = $derived(ActionsLabelColors(colorsProp, dark));
 let isDividers = $derived(
   typeof dividers === "undefined" ? theme === "ios" : dividers
 );
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ActionsLabelClasses(
-      { fontSizeIos, fontSizeMaterial, dividers: isDividers },
-      colors
-    ),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ActionsLabelClasses(
+    { fontSizeIos, fontSizeMaterial, dividers: isDividers },
+    colors
+  ),
+  (v) => c = v,
+  className
 );
 </script>
 

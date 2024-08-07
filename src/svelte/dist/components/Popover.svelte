@@ -39,16 +39,16 @@ let positions = $state({
   popoverPosition: "top-left"
 });
 let _state = $derived(opened ? "opened" : "closed");
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 const dark = useDarkClasses();
 let colors = $derived(PopoverColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    PopoverClasses({ size, angleClass, translucent }, colors, className),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  PopoverClasses({ size, angleClass, translucent }, colors, className),
+  (v) => c = v,
+  className
 );
 const setPopover = () => {
   if (!target || !el || !opened) return;

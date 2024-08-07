@@ -40,11 +40,13 @@ let {
   segmentedStrong = false,
   segmentedActive = false,
   touchRipple = true,
-  onClick,
+  onclick: OnClick,
+  onclick,
   children,
   ...restProps
 } = $props();
-let theme = $state(useTheme({}, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({}, (v) => theme = v);
 let rippleEl = $state({ current: null });
 let attrs = $derived({
   href,
@@ -91,31 +93,30 @@ let style = $derived(
   )
 );
 let colors = $derived(ButtonColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ButtonClasses(
-      {
-        inline,
-        segmented,
-        segmentedStrong,
-        segmentedActive,
-        disabled,
-        outline: isOutline,
-        clear: isClear,
-        tonal: isTonal,
-        rounded: isRounded,
-        small: isSmall,
-        large: isLarge,
-        raised: isRaised
-      },
-      colors,
-      className,
-      dark
-    ),
-    (v) => c = v,
-    ""
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ButtonClasses(
+    {
+      inline,
+      segmented,
+      segmentedStrong,
+      segmentedActive,
+      disabled,
+      outline: isOutline,
+      clear: isClear,
+      tonal: isTonal,
+      rounded: isRounded,
+      small: isSmall,
+      large: isLarge,
+      raised: isRaised
+    },
+    colors,
+    className,
+    dark
+  ),
+  (v) => c = v,
+  ""
 );
 let classes = $derived(
   cls(
@@ -139,7 +140,7 @@ let classes = $derived(
     {...attrs}
     role="button"
     tabindex="0"
-    onclick="{onClick}"
+    {onclick}
   >
     {@render children()}
   </svelte:element>
@@ -150,7 +151,7 @@ let classes = $derived(
     class="{classes}"
     {disabled}
     {...attrs}
-    onclick="{onClick}"
+    {onclick}
   >
     {@render children()}
   </ElComponent>

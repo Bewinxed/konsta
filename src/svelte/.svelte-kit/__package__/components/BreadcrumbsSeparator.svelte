@@ -8,13 +8,12 @@ let {
   children,
   ...restProps
 } = $props();
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    BreadcrumbsSeparatorClasses(),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  BreadcrumbsSeparatorClasses(),
+  (v) => c = v,
+  className
 );
 </script>
 

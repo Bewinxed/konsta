@@ -7,7 +7,8 @@ let {
   children,
   ...restProps
 } = $props();
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 </script>
 
 {#if theme === 'ios'}

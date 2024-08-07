@@ -19,13 +19,12 @@
 
   let rippleEl = $state({ current: null });
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      TableBodyClasses({}),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    TableBodyClasses({}),
+    (v) => (c = v),
+    className
   );
 </script>
 

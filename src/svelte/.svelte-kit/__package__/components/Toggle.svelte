@@ -25,13 +25,12 @@ const dark = useDarkClasses();
 useTouchRipple(rippleTargetElRef, touchRipple, elRef);
 let colors = $derived(ToggleColors(colorsProp, dark));
 let _state = $derived(checked ? "checked" : "notChecked");
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ToggleClasses({}, colors, className, dark),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ToggleClasses({}, colors, className, dark),
+  (v) => c = v,
+  className
 );
 </script>
 

@@ -21,7 +21,8 @@ let {
   ...restProps
 } = $props();
 let highlightElRef = $state();
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 let highlightStyle = $state({
   transform: "",
   width: ""
@@ -51,25 +52,24 @@ onMount(() => setHighlight());
 $effect(() => setHighlight());
 const dark = useDarkClasses();
 let colors = $derived(ToolbarColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ToolbarClasses(
-      {
-        outline: isOutline,
-        translucent,
-        bgClass,
-        innerClass,
-        tabbar,
-        top,
-        tabbarIcons,
-        tabbarLabels
-      },
-      colors
-    ),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ToolbarClasses(
+    {
+      outline: isOutline,
+      translucent,
+      bgClass,
+      innerClass,
+      tabbar,
+      top,
+      tabbarIcons,
+      tabbarLabels
+    },
+    colors
+  ),
+  (v) => c = v,
+  className
 );
 </script>
 

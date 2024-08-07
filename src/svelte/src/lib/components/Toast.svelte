@@ -33,13 +33,12 @@
 
   let colors = $derived(ToastColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ToastClasses({ opened, translucent }, colors, className),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ToastClasses({ opened, translucent }, colors, className),
+    (v) => (c = v),
+    className
   );
 </script>
 

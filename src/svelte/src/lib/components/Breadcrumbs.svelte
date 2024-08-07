@@ -21,13 +21,12 @@
     children?: Snippet;
   } = $props();
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      BreadcrumbsClasses({ fontSizeIos, fontSizeMaterial }),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    BreadcrumbsClasses({ fontSizeIos, fontSizeMaterial }),
+    (v) => (c = v),
+    className
   );
 </script>
 

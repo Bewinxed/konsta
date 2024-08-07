@@ -77,17 +77,16 @@
       : bold
   );
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ActionsButtonClasses(
-        { bold: isBold, fontSizeIos, fontSizeMaterial, dividers: isDividers },
-        colors,
-        dark
-      ),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ActionsButtonClasses(
+      { bold: isBold, fontSizeIos, fontSizeMaterial, dividers: isDividers },
+      colors,
+      dark
+    ),
+    (v) => (c = v),
+    className
   );
 </script>
 

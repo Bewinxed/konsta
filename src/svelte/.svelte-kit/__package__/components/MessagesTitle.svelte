@@ -15,13 +15,12 @@ let {
 let rippleEl = $state({ current: null });
 const dark = useDarkClasses();
 let colors = $derived(MessagesTitleColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    MessagesTitleClasses({}, colors),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  MessagesTitleClasses({}, colors),
+  (v) => c = v,
+  className
 );
 </script>
 

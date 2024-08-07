@@ -19,13 +19,12 @@ let {
 let highlightElRef = $state();
 const dark = useDarkClasses();
 let colors = $derived(SegmentedColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    SegmentedClasses({ outline, rounded }, colors, dark),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  SegmentedClasses({ outline, rounded }, colors, dark),
+  (v) => c = v,
+  className
 );
 let highlightStyle = $state({
   transform: "",

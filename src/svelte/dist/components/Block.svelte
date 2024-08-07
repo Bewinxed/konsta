@@ -24,7 +24,8 @@ let {
   children,
   ...restProps
 } = $props();
-let theme = $state(useTheme({}, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({}, (v) => theme = v);
 const dark = useDarkClasses();
 let isStrong = $derived(
   typeof strong === "undefined" ? theme === "ios" ? strongIos : strongMaterial : strong
@@ -36,23 +37,22 @@ let isInset = $derived(
   typeof inset === "undefined" ? theme === "ios" ? insetIos : insetMaterial : inset
 );
 let colors = $derived(BlockColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    BlockClasses(
-      {
-        margin,
-        padding,
-        inset: isInset,
-        outline: isOutline,
-        strong: isStrong
-      },
-      colors,
-      className
-    ),
-    (v) => c = v,
-    ""
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  BlockClasses(
+    {
+      margin,
+      padding,
+      inset: isInset,
+      outline: isOutline,
+      strong: isStrong
+    },
+    colors,
+    className
+  ),
+  (v) => c = v,
+  ""
 );
 let classes = $derived(
   cls(

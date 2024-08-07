@@ -27,13 +27,12 @@ const dark = useDarkClasses();
 $effect(() => useTouchRipple(rippleEl, touchRipple));
 let colors = $derived(CheckboxColors(colorsProp, dark));
 let _state = $derived(checked || indeterminate ? "checked" : "notChecked");
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    CheckboxClasses({}, colors, className, dark),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  CheckboxClasses({}, colors, className, dark),
+  (v) => c = v,
+  className
 );
 function watchIndeterminate(indeterminatePassed) {
   if (inputEl) {

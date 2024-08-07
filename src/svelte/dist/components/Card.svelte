@@ -39,21 +39,20 @@ let isRaised = $derived(
 );
 let style = $derived(isOutline ? "outline" : isRaised ? "raised" : "plain");
 let colors = $derived(CardColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    CardClasses(
-      {
-        margin,
-        contentWrapPadding,
-        headerDivider,
-        footerDivider
-      },
-      colors
-    ),
-    (v) => c = v,
-    ""
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  CardClasses(
+    {
+      margin,
+      contentWrapPadding,
+      headerDivider,
+      footerDivider
+    },
+    colors
+  ),
+  (v) => c = v,
+  ""
 );
 </script>
 

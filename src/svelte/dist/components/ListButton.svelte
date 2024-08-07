@@ -26,21 +26,21 @@ let ListDividersContext = $state(
   }) || { value: false }
 );
 let rippleEl = $state({ current: null });
-let theme = $state(useTheme({ ios, material }, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({ ios, material }, (v) => theme = v);
 $effect(() => useTouchRipple(rippleEl, touchRipple));
 const dark = useDarkClasses();
 let colors = $derived(ListButtonColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    ListButtonClasses(
-      { dividers: ListDividersContext.value },
-      colors,
-      className
-    ),
-    (v) => c = v,
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ListButtonClasses(
+    { dividers: ListDividersContext.value },
+    colors,
     className
-  )
+  ),
+  (v) => c = v,
+  className
 );
 let isLink = $derived(!!href || href === "");
 let hrefComputed = $derived(

@@ -62,13 +62,12 @@
 
   let colors = $derived(NotificationsColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      NotificationsClasses({ opened, translucent }, colors, className),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    NotificationsClasses({ opened, translucent }, colors, className),
+    (v) => (c = v),
+    className
   );
 </script>
 

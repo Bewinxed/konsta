@@ -23,24 +23,23 @@ let {
 let _state = $derived(opened ? "opened" : "closed");
 const dark = useDarkClasses();
 let colors = $derived(DialogColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    DialogClasses(
-      {
-        translucent,
-        sizeIos,
-        sizeMaterial,
-        titleFontSizeIos,
-        titleFontSizeMaterial
-      },
-      colors,
-      className,
-      { hasButtons: buttons }
-    ),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  DialogClasses(
+    {
+      translucent,
+      sizeIos,
+      sizeMaterial,
+      titleFontSizeIos,
+      titleFontSizeMaterial
+    },
+    colors,
+    className,
+    { hasButtons: buttons }
+  ),
+  (v) => c = v,
+  className
 );
 </script>
 

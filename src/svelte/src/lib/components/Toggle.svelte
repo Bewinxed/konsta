@@ -50,13 +50,12 @@
 
   let _state = $derived(checked ? 'checked' : 'notChecked');
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ToggleClasses({}, colors, className, dark),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ToggleClasses({}, colors, className, dark),
+    (v) => (c = v),
+    className
   );
 </script>
 

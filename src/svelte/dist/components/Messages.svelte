@@ -10,13 +10,12 @@ let {
   ...restProps
 } = $props();
 let rippleEl = $state({ current: null });
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    MessagesClasses(),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  MessagesClasses(),
+  (v) => c = v,
+  className
 );
 </script>
 

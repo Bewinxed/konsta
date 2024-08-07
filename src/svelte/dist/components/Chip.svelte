@@ -18,11 +18,15 @@ let {
   ...restProps
 } = $props();
 const dark = useDarkClasses();
-let theme = $state(useTheme({}, (v) => theme = v));
+let theme = $state("");
+theme = useTheme({}, (v) => theme = v);
 let style = $derived(outline ? "outline" : "fill");
 let colors = $derived(ChipColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses({ ios, material }, ChipClasses({}, colors), (v) => c = v)
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  ChipClasses({}, colors),
+  (v) => c = v
 );
 </script>
 

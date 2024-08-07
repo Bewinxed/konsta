@@ -128,8 +128,7 @@
 
   // input props
 
-  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
-
+  let theme = $state('');
   theme = useTheme({ ios, material }, (v) => (theme = v));
 
   let isOutline = $derived(
@@ -193,29 +192,28 @@
     if (onBlur) onBlur(e);
   };
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      ListInputClasses(
-        {
-          error,
-          type,
-          inputClass,
-          outline: isOutline,
-        },
-        colors,
-        {
-          isFloatingTransformed,
-          isFocused,
-          darkClasses: dark,
-          getLabelColor,
-          inputClass,
-          hasLabel: label || labelSlot,
-        }
-      ),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    ListInputClasses(
+      {
+        error,
+        type,
+        inputClass,
+        outline: isOutline,
+      },
+      colors,
+      {
+        isFloatingTransformed,
+        isFocused,
+        darkClasses: dark,
+        getLabelColor,
+        inputClass,
+        hasLabel: label || labelSlot,
+      }
+    ),
+    (v) => (c = v),
+    className
   );
 
   let InputComponent = $derived(

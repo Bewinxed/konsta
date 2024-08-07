@@ -33,13 +33,12 @@
 
   let colors = $derived(SheetColors(colorsProp, dark));
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      SheetClasses({}, colors, className),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    SheetClasses({}, colors, className),
+    (v) => (c = v),
+    className
   );
 </script>
 

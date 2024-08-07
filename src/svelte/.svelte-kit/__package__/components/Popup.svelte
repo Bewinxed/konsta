@@ -17,13 +17,12 @@ let {
 let _state = $derived(opened ? "opened" : "closed");
 const dark = useDarkClasses();
 let colors = $derived(PopupColors(colorsProp, dark));
-let c = $state(
-  useThemeClasses(
-    { ios, material },
-    PopupClasses({ size }, colors, className),
-    (v) => c = v,
-    className
-  )
+let c = $state({});
+c = useThemeClasses(
+  { ios, material },
+  PopupClasses({ size }, colors, className),
+  (v) => c = v,
+  className
 );
 </script>
 

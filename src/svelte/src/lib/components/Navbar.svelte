@@ -103,39 +103,38 @@
     typeof outline === 'undefined' ? theme === 'ios' : outline
   );
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      NavbarClasses(
-        {
-          bgClass,
-          innerClass,
-          leftClass,
-          titleClass,
-          subtitleClass,
-          rightClass,
-          subnavbarClass,
-          translucent,
-          transparent,
-          outline: isOutline,
-          fontSizeIos,
-          fontSizeMaterial,
-          titleFontSizeIos,
-          titleFontSizeMaterial,
-          medium,
-          large,
-          titleMediumFontSizeIos,
-          titleMediumFontSizeMaterial,
-          titleLargeFontSizeIos,
-          titleLargeFontSizeMaterial,
-          centerTitle:
-            typeof centerTitle === 'undefined' ? theme === 'ios' : centerTitle,
-        },
-        colors
-      ),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    NavbarClasses(
+      {
+        bgClass,
+        innerClass,
+        leftClass,
+        titleClass,
+        subtitleClass,
+        rightClass,
+        subnavbarClass,
+        translucent,
+        transparent,
+        outline: isOutline,
+        fontSizeIos,
+        fontSizeMaterial,
+        titleFontSizeIos,
+        titleFontSizeMaterial,
+        medium,
+        large,
+        titleMediumFontSizeIos,
+        titleMediumFontSizeMaterial,
+        titleLargeFontSizeIos,
+        titleLargeFontSizeMaterial,
+        centerTitle:
+          typeof centerTitle === 'undefined' ? theme === 'ios' : centerTitle,
+      },
+      colors
+    ),
+    (v) => (c = v),
+    className
   );
 
   const getScrollEl = () => {

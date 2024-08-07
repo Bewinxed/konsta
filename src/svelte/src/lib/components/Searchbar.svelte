@@ -58,7 +58,8 @@
     children?: Snippet;
   } = $props();
 
-  let theme = $state(useTheme({ ios, material }, (v) => (theme = v)));
+  let theme = $state('');
+  theme = useTheme({ ios, material }, (v) => (theme = v));
 
   let searchEl = $state<HTMLElement>();
   let rippleEl = $state({ current: null });
@@ -125,16 +126,15 @@
     });
   });
 
-  let c = $state(
-    useThemeClasses(
-      { ios, material },
-      SearchbarClasses({}, colors, {
-        isEnabled,
-        darkClasses: dark,
-      }),
-      (v) => (c = v),
-      className
-    )
+  let c = $state({});
+  c = useThemeClasses(
+    { ios, material },
+    SearchbarClasses({}, colors, {
+      isEnabled,
+      darkClasses: dark,
+    }),
+    (v) => (c = v),
+    className
   );
 </script>
 
